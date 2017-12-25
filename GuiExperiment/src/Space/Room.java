@@ -12,16 +12,16 @@ public class Room {
 	private boolean shapeCanClose;
 	
 	
-	int x_min = Integer.MAX_VALUE;
-	int x_max = Integer.MIN_VALUE;
-	int y_min = Integer.MAX_VALUE;
-	int y_max = Integer.MIN_VALUE;
+	private int x_min = Integer.MAX_VALUE;
+	private int x_max = Integer.MIN_VALUE;
+	private int y_min = Integer.MAX_VALUE;
+	private int y_max = Integer.MIN_VALUE;
 	
 	public Room(){
 		points = new ArrayList<Point>();
-		//AddPoint(10,10);
-		//AddPoint(40,15);
-		//AddPoint(15,40);
+		//addPoint(10,10);
+		//addPoint(40,15);
+		//addPoint(15,40);
 		
 	}
 	
@@ -29,7 +29,7 @@ public class Room {
 		return points;
 	}
 	
-	public boolean AddPoint(int x, int y) {
+	public boolean addPoint(int x, int y) {
 		// Compute whether the new line point does not intersect any point in the figure
 		if (points.size() > 2)
 		{
@@ -56,7 +56,7 @@ public class Room {
 		return true;
 	}
 	
-	public void RemoveLastPoint() {
+	public void removeLastPoint() {
 		points.remove(points.size() - 1);
 		this.onUpdate();
 	}
