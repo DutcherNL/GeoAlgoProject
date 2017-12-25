@@ -1,5 +1,6 @@
 package GUI;
 
+import Space.Lights;
 import Space.Room;
 import Space.UpdateEvent;
 
@@ -11,24 +12,27 @@ import java.awt.event.ActionListener;
 public class Options extends JPanel{
 	
 	private Room room;
+	private Lights lights;
 	private int width = 100;
 	
 	
-	public Options(Room Room) {
-		this.room = Room;
-		
+	public Options(Room room, Lights lights) {
+		this.room = room;
+		this.lights = lights;
+
 		LayoutManager experimentLayout = new GridLayout(10,1);
 		this.setLayout(experimentLayout);
 		
-		// Clear button
+		// clear button
 		JButton button_Clear = new JButton("Clear Points");
 		button_Clear.setSize(this.width, 50);
 		this.add(button_Clear);
 		button_Clear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-	            room.Clear();
+	            room.clear();
+	            lights.clear();
 	         }          
-	      });
+		});
 
 		// removeLastPoint button
 		JButton button_RemoveLastPoint = new JButton("Remove Last Point");
@@ -38,7 +42,7 @@ public class Options extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 	            room.removeLastPoint();
 	         }          
-	      });
+	    });
 		
 		// Load button
 		JButton button_Load = new JButton("Load external");
@@ -59,11 +63,10 @@ public class Options extends JPanel{
 				button_Shape.setEnabled(room.canClose());;
 			}
 		});
-		
-		
-		
-		
-	}
-	
 
+		// Compute visibilityRegion button
+		JButton button_visibility = new JButton("Compute Visibility Region");
+		this.add(button_visibility);
+		button_visibility.addActionListener(e -> lights.calculateVisibilityRegions());
+	}
 }

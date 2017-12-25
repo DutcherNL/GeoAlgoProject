@@ -1,14 +1,18 @@
 package Space;
 
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Room {
 
+	public final static Color POINT_COLOR = new Color(53, 53, 53);
+	public final static Color EDGE_COLOR = new Color(53, 53, 53);
+	public final static Color BACKGROUND_COLOR = new Color(151, 151, 151);
+	public final static Color EDGE_ERROR_COLOR = Color.RED;
+
 	private List<Point> points;
-	private List<UpdateEvent> listeners = new ArrayList<UpdateEvent>();
+	private List<UpdateEvent> listeners = new ArrayList<>();
 	private boolean shapeCanClose;
 	
 	
@@ -67,7 +71,7 @@ public class Room {
 		return new Rectangle(x_min, y_min, x_max - x_min, y_max - y_min);
 	}
 	
-	public void Clear() {
+	public void clear() {
 		points.clear();
 		this.onUpdate();
 	}
