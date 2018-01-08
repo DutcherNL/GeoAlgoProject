@@ -69,6 +69,7 @@ public class PhaseControl_Builder extends PhaseControl{
 		}
 
 		points.add(new Point(x,y));
+		
 		this.computeCanClose();
 		this.onUpdate();
 		

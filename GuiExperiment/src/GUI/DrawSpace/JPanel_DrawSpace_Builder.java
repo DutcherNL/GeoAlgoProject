@@ -25,7 +25,6 @@ public class JPanel_DrawSpace_Builder extends JPanel_DrawSpace{
 		this.roomBuilder = RoomBuilder;
 
 		//zoomScope();
-		this.addMouseListener(this);
 
 		this.roomBuilder.addListener(this::repaint);
 	}
@@ -63,10 +62,7 @@ public class JPanel_DrawSpace_Builder extends JPanel_DrawSpace{
 	}
 	
 	
-	@Override
-	public Dimension getPreferredSize() {
-	      return size;
-	   }
+
 	
 
 	@Override
@@ -80,29 +76,5 @@ public class JPanel_DrawSpace_Builder extends JPanel_DrawSpace{
 		/*else if (me.getButton() == MouseEvent.BUTTON3) {
 			lights.addLight(new Point(x, y));
 		}*/
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent me) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent me) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent me) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent me) {
-		// TODO Auto-generated method stub
-		
 	}
 }

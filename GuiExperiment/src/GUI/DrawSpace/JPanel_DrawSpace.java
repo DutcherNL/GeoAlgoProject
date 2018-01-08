@@ -21,6 +21,11 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 	protected double zoomFactor_y = 1;
 	protected double edgeCorrection = 20;
 	
+	
+	public JPanel_DrawSpace() {
+		this.addMouseListener(this);
+	}
+	
 	/**
 	 * Draw points on the screen for a given list of points
 	 * @param g The graphics object
@@ -28,6 +33,10 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 	 * @param color The color of the points
 	 */
 	protected void drawPoints(Graphics g, List<Point> points, Color color) {
+		if (points == null)
+			return;
+		
+		
 		g.setColor(color);
 		for(int i=0; i<points.size();i++) {
 			g.fillOval(
@@ -106,7 +115,10 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 	}
 	
 	
-	
+	@Override
+	public Dimension getPreferredSize() {
+	      return size;
+	   }
 	
 	
 	

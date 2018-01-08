@@ -126,8 +126,6 @@ public class Screen {
 		}
 		
 		guiFrame.revalidate();
-		
-		System.out.println("Phase is now "+this.phase);
 	}
 	
 	/**
@@ -202,10 +200,10 @@ public class Screen {
 	private void BuildPhase1() {
 		RemoveGeneral();
 		
-		phaseController = new PhaseControl_Builder(room);
+		phaseController = new PhaseControl_Triangulate(room);
 		this.phaseName.setText("Prepare Room");
-		this.options = new JPanel_Options_RoomComplete(room);
-		this.drawSpace = new JPanel_DrawSpace_Builder((PhaseControl_Builder)phaseController);
+		this.options = new JPanel_Options_RoomTriangulate((PhaseControl_Triangulate)phaseController);
+		this.drawSpace = new JPanel_DrawSpace_Triangulate((PhaseControl_Triangulate)phaseController);
 		
 		BuildGeneral();
 		
