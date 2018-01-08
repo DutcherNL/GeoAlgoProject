@@ -4,6 +4,11 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
+/**
+ * 
+ * @author 
+ *
+ */
 public class Lights {
 
     public final static Color POINT_COLOR = Color.BLUE;
@@ -28,12 +33,13 @@ public class Lights {
             visibilityRegions.add(calculateVisibilityRegion(light));
         }
 
-        visibilityRegions.add(new ArrayList<>(room.getPoints()));
+        // TODO: visibilityRegions.add(new ArrayList<>(room.getPoints()));
 
         this.onUpdate();
     }
 
     private List<Point> calculateVisibilityRegion(Point light) {
+    	return null;/*
         Stack<Point> visiblePoints = new Stack<>();
         Iterator<Point> roomPoints = room.getPoints().iterator();
 
@@ -55,7 +61,7 @@ public class Lights {
             }
         }
 
-        return visiblePoints;
+        return visiblePoints;*/
     }
 
     private boolean isVisibleWRT(Point a, Point b) {

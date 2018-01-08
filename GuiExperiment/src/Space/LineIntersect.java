@@ -7,6 +7,7 @@ import java.awt.Rectangle;
  * Source:
  * https://martin-thoma.com/how-to-check-if-two-line-segments-intersect/
  */
+
 public class LineIntersect {
 	
 	public static boolean doLinesIntersect(Point a_start, Point a_end, Point b_start, Point b_end) {

@@ -6,109 +6,92 @@ import java.util.List;
 
 public class Room {
 
-	public final static Color POINT_COLOR = new Color(53, 53, 53);
-	public final static Color EDGE_COLOR = new Color(53, 53, 53);
-	public final static Color BACKGROUND_COLOR = new Color(151, 151, 151);
-	public final static Color EDGE_ERROR_COLOR = Color.RED;
-
-	private List<Point> points;
+	/**
+	 * A collection of all fragment sections.
+	 */
+	private List<RoomFragment> sections;
+	
+	/**
+	 * A collection of all listeners
+	 */
 	private List<UpdateEvent> listeners = new ArrayList<>();
-	private boolean shapeCanClose;
 	
-	
+	/**
+	 * The bounding perimters of the room
+	 */
 	private int x_min = Integer.MAX_VALUE;
 	private int x_max = Integer.MIN_VALUE;
 	private int y_min = Integer.MAX_VALUE;
 	private int y_max = Integer.MIN_VALUE;
 	
+	/**
+	 * Constructor
+	 */
 	public Room(){
-		points = new ArrayList<Point>();
-		//addPoint(10,10);
-		//addPoint(40,15);
-		//addPoint(15,40);
-		
+		sections = new ArrayList<RoomFragment>();		
 	}
 	
-	public List<Point> getPoints(){
-		return points;
+	/**
+	 * Return all fragments in the room
+	 * @return
+	 */
+	public List<RoomFragment> getFragments(){
+		return sections;
 	}
 	
-	public boolean addPoint(int x, int y) {
-		// Compute whether the new line point does not intersect any point in the figure
-		if (points.size() > 2)
-		{
-	    	Point start = points.get(points.size() - 1);
-	    	Point end = new Point(x,y);
-	    	
-	    	for(int i=0; i + 2<points.size();i++) {
-	    		if (LineIntersect.doLinesIntersect(start, end, points.get(i), points.get(i+1))) {
-	    			System.out.println("New line intersects line "+i);			
-	    			return false;
-	    		}
-			}
-		}
+	/**
+	 * Add a room fragment (section)
+	 * @param RoomFragment The fragment added
+	 */
+	public void addFragment(RoomFragment RoomFragment) {
+		this.sections.add(RoomFragment);
 		
-		// Adjust boundaries
-		if (x < x_min) x_min = x;
-		if (y < y_min) y_min = y;
-		if (x > x_max) x_max = x;
-		if (y > y_max) y_max = y;
+		// Adjust the bounding box
+		Rectangle R = RoomFragment.getBoundaryBox();
+		if (R.getMinX() < x_min) x_min = (int) R.getMinX();
+		if (R.getMinY() < y_min) y_min = (int) R.getMinY();
+		if (R.getMaxX() > x_max) x_max = (int) R.getMaxX();
+		if (R.getMaxY() > y_max) y_max = (int) R.getMaxY();
 		
-		points.add(new Point(x,y));
+		
 		this.onUpdate();
-		
-		return true;
-	}
+	}	
 	
-	public void removeLastPoint() {
-		points.remove(points.size() - 1);
-		this.onUpdate();
-	}
-	
-	
+	/**
+	 * Get the bounding box of the room
+	 * @return The entire bounding box
+	 */
 	public Rectangle getBoundary(){
-		//return new Rectangle(0, 0, 50, 50);
 		return new Rectangle(x_min, y_min, x_max - x_min, y_max - y_min);
 	}
 	
+	/**
+	 * Clear the entire room contents
+	 */
 	public void clear() {
-		points.clear();
+		sections.clear();
+		x_min = Integer.MAX_VALUE;
+		x_max = Integer.MIN_VALUE;
+		y_min = Integer.MAX_VALUE;
+		y_max = Integer.MIN_VALUE;
+		
 		this.onUpdate();
 	}
 	
+	/**
+	 * Add a listener for updates
+	 * @param toAdd The event listener
+	 */
 	public void addListener(UpdateEvent toAdd) {
         listeners.add(toAdd);
     }
 
-    public void onUpdate() {
-    	// recalc can close state
-    	this.computeCanClose();
-    	
+	/**
+	 * Trigger update method
+	 */
+    public void onUpdate() {    	
         // Notify everybody that may be interested.
         for (UpdateEvent uE : listeners)
             uE.onUpdate();
-    }
-    
-    public boolean canClose() {
-    	return this.shapeCanClose;
-    }
-	
-    private boolean computeCanClose() {
-    	if (points.size() < 3) {
-    		return this.shapeCanClose = false;
-    	}
-    	
-    	Point start = points.get(0);
-    	Point end = points.get(points.size() - 1);
-    	
-    	for(int i=1; i + 2<points.size();i++)
-		{
-    		if (LineIntersect.doLinesIntersect(start, end, points.get(i), points.get(i+1))) {
-    			System.out.println("Failed on i="+i);			
-    			return shapeCanClose = false;
-    		}
-		}
-    	
-    	return shapeCanClose = true;
     }
 }
