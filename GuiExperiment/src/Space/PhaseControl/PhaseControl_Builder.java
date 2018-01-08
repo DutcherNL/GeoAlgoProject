@@ -1,17 +1,18 @@
-package Space;
+package Space.PhaseControl;
 
-import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
+
+import Space.*;
 
 /**
  * Control options for the first phase of the program. Constructing of the room.
  * @author i_wou_000
  *
  */
-public class PhaseControl_Builder implements PhaseControl{
+public class PhaseControl_Builder extends PhaseControl{
 
 	/**
 	 *  Store a collection of working points to create a shape.
@@ -114,13 +115,7 @@ public class PhaseControl_Builder implements PhaseControl{
 		
 	}
 	
-	/**
-	 * Adds a listener eager for updates
-	 * @param toAdd The added listener event
-	 */
-	public void addListener(UpdateEvent toAdd) {
-        listeners.add(toAdd);
-    }
+	
 
 	/**
 	 * Computes whether the shape can legitimately close
@@ -170,20 +165,6 @@ public class PhaseControl_Builder implements PhaseControl{
 		return null;
 	}
 	
-	/////////////// UPDATE EVENT //////////////////
-	/**
-	 * Store a list of current listeners
-	 */
-	private List<UpdateEvent> listeners = new ArrayList<>();
-	/**
-	 * Calls the update events
-	 */
-    public void onUpdate() {   	
-        // Notify everybody that may be interested.
-        for (UpdateEvent uE : listeners)
-            uE.onUpdate();
-    }
-
 	@Override
 	public boolean canGoEnterNextPhase() {
 		return room.getFragments().size() > 0;

@@ -17,6 +17,8 @@ import javax.swing.JPanel;
 public class JPanel_PhaseScreen extends JPanel{
 
 	private Screen screen;
+	private JButton button_Previous;
+	private JButton button_Next;
 	
 	/**
 	 * CONSTRUCTOR
@@ -30,9 +32,9 @@ public class JPanel_PhaseScreen extends JPanel{
 		this.setLayout(experimentLayout);
 		
 		// previous button
-		JButton button_Previuos = new JButton("Previous phase");
-		this.add(button_Previuos);
-		button_Previuos.addActionListener(new ActionListener() {
+		this.button_Previous = new JButton("Previous phase");
+		this.add(button_Previous);
+		button_Previous.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Previous pressed");
 				
@@ -42,7 +44,7 @@ public class JPanel_PhaseScreen extends JPanel{
 		});
 		
 		// Next button
-		JButton button_Next = new JButton("Next phase");
+		this.button_Next = new JButton("Next phase");
 		this.add(button_Next);
 		button_Next.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -52,6 +54,12 @@ public class JPanel_PhaseScreen extends JPanel{
 	            	screen.setPhase(true);
 	            }}
 		});
+	}
+	
+	public void UpdateButtonStatus() {
+		System.out.println("Update Screen");
+		this.button_Next.setEnabled(this.screen.canEnterNextPhase());
+		this.button_Previous.setEnabled(this.screen.canEnterPreviousPhase());
 	}
 	
 	

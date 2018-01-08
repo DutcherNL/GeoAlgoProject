@@ -1,18 +1,17 @@
 package GUI;
 
-import Space.Lights;
-import Space.PhaseControl;
-import Space.PhaseControl_Builder;
-import Space.Room;
+import Space.*;
+import Space.PhaseControl.*;
 
 import javax.swing.*;
 
-import GUI.DrawSpace.JPanel_DrawSpace_Builder;
-import GUI.Options.JPanel_Options;
-import GUI.Options.JPanel_Options_RoomBuild;
-import GUI.Options.JPanel_Options_RoomComplete;
+import GUI.*;
+import GUI.DrawSpace.*;
+import GUI.Options.*;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 
 /**
@@ -27,15 +26,16 @@ public class Screen {
 	private Lights lights;
 	
 	private JPanel_Options options;
-	private JPanel_DrawSpace_Builder drawSpace;
-	GridBagConstraints GBC;
-	private PhaseControl phaseController;
+	private JPanel_DrawSpace drawSpace;
+	private JPanel_PhaseScreen phaseScreen;
+	private GridBagConstraints GBC;
+	private Space.PhaseControl.PhaseControl phaseController;
 	
 	private Label phaseName;
 	private int phase = 0;
 	/**
 	 * Phase 0 = room build
-	 * Phase 1 = Room acceptance
+	 * Phase 1 = Room acceptance (triangulisation)
 	 * Phase 2 = Build Lights
 	 */
 
@@ -64,7 +64,8 @@ public class Screen {
 		GBC.gridx = 1;
 		GBC.gridy = 2;
 		GBC.anchor = GridBagConstraints.SOUTH;
-		guiFrame.add(new JPanel_PhaseScreen(this), GBC);
+		this.phaseScreen = new JPanel_PhaseScreen(this);
+		guiFrame.add(this.phaseScreen, GBC);
 		
 		// Set up the Label
 		GBC.anchor = GridBagConstraints.NORTH;
@@ -156,6 +157,7 @@ public class Screen {
 	 * Rebuild the workspace
 	 */
 	private void BuildGeneral() {
+		// Add the draw Space
 		GBC.gridx = 0;
 		GBC.gridy = 0;
 		GBC.gridwidth = 1;
@@ -163,11 +165,21 @@ public class Screen {
 		guiFrame.add(drawSpace, GBC);
 		drawSpace.repaint();
 		
+		// add the options screen
 		GBC.gridwidth = 1;
 		GBC.gridheight = 1;
 		GBC.gridx = 1;
 		GBC.gridy = 1;
 		guiFrame.add(this.options, GBC);
+		
+		// Link the phase buttons to the phasecontrol
+		phaseController.addListener(new UpdateEvent() {
+			public void onUpdate() {
+				phaseScreen.UpdateButtonStatus();
+			}          
+		});
+		
+		phaseScreen.UpdateButtonStatus();
 	}
 	
 	/**
@@ -178,8 +190,8 @@ public class Screen {
 		
 		phaseController = new PhaseControl_Builder(room);
 		this.phaseName.setText("Draw Room");
-		this.options = new JPanel_Options_RoomBuild((PhaseControl_Builder)phaseController);
-		drawSpace = new JPanel_DrawSpace_Builder((PhaseControl_Builder)phaseController);
+		this.options = new JPanel_Options_RoomBuild((PhaseControl_Builder)this.phaseController);
+		drawSpace = new JPanel_DrawSpace_Builder((PhaseControl_Builder)this.phaseController);
 		
 		BuildGeneral();
 	}

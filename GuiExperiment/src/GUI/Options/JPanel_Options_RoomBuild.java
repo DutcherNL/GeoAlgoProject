@@ -1,7 +1,7 @@
 package GUI.Options;
 
 import Space.Lights;
-import Space.PhaseControl_Builder;
+import Space.PhaseControl.PhaseControl_Builder;
 import Space.Room;
 import Space.UpdateEvent;
 
