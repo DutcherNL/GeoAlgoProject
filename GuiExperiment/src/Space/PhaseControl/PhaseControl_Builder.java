@@ -62,8 +62,8 @@ public class PhaseControl_Builder extends PhaseControl{
 	public boolean addVertex(int x, int y) {
 		if (vertices.size() == 0) {
 			vertices.add(new Vertex(x, y, true));
-		} else if (vertices.size() == 2) {
-			Vertex previous = vertices.get(0);
+		} else if (vertices.size() == 1) {
+			Vertex previous = vertices.get(vertices.size() - 1);
 			vertices.add(new Vertex(x, y, previous));
 		} else {
 			// Compute whether the new line point does not intersect any point in the figure
