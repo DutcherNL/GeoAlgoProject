@@ -14,4 +14,40 @@ public class Utilities {
 
         return result;
     }
+    
+    public static double computeInternalAngle(Vertex Source) {
+    	return computeAngle(Source.getPrevious(), Source, Source.getNext());
+    }
+    
+    /**
+	 * Compute if A is below B
+	 * @param A
+	 * @param B
+	 * @return
+	 */
+	private static boolean isBelow(Point A, Point B) {
+		if (A.y < B.y) return true;
+		if (A.y == B.y && A.x > B.x) return true;
+		return false;
+	}
+	
+	private PointType computePointType(Vertex Vertex) {
+		double angle;
+		
+		if (Utilities.isBelow(Vertex.getPrevious(),Vertex) &&
+			Utilities.isBelow(Vertex.getNext(), Vertex)) {
+			if ((angle = Utilities.computeInternalAngle(Vertex)) < Math.PI)
+				return PointType.STARTVERTEX;
+			else if (angle > Math.PI)
+				return PointType.SPLITVERTEX;
+		}
+		if (Utilities.isBelow(Vertex.getPrevious(),Vertex) &&
+				Utilities.isBelow(Vertex.getNext(), Vertex)) {
+				if ((angle = Utilities.computeInternalAngle(Vertex)) < Math.PI)
+					return PointType.ENDVERTEX;
+				else if (angle > Math.PI)
+					return PointType.MERGEVERTEX;
+		}
+		return PointType.REGULARVERTEX;
+}
 }
