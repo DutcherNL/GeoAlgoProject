@@ -10,7 +10,7 @@ import java.util.List;
 
 public class JPanel_DrawSpace extends JPanel implements MouseListener{
 
-	protected Dimension size = new Dimension(400,400);
+	protected Dimension size = new Dimension(800,800);
 	protected int pointWidth = 10;
 	protected double start_x = 0;
 	protected double start_y = 0;

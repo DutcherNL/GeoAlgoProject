@@ -69,8 +69,8 @@ public class PhaseControl_Builder extends PhaseControl{
 			// Compute whether the new line point does not intersect any point in the figure
 			Vertex previous = vertices.get(vertices.size() - 1);
 	    	Point currentPoint = new Point(x, y);
-	    	
-	    	if (!this.doesIntersect(previous, currentPoint, false)) {
+
+	    	if (this.doesIntersect(previous, currentPoint, false, true)) {
 				return false;
 			}
 
@@ -136,7 +136,7 @@ public class PhaseControl_Builder extends PhaseControl{
     	
     	Vertex start = vertices.get(0);
     	Vertex end = vertices.get(vertices.size() - 1);
-    	return shapeCanClose = doesIntersect(start, end, true);
+    	return shapeCanClose = !doesIntersect(start, end, true, false);
     }
     
     /**
@@ -145,20 +145,20 @@ public class PhaseControl_Builder extends PhaseControl{
      * @param end The end position of the line
      * @return Whether the line indeed intersects
      */
-    private boolean doesIntersect(Point start, Point end, boolean ignoreEndpoints) {
+    private boolean doesIntersect(Point start, Point end, boolean ignoreEndpoints, boolean ignoreLastPlacedVertex) {
     	int t = 0;
     	if (ignoreEndpoints)
     		t = 1;
     	
-    	for(int i = t; i + 2 < vertices.size(); i++)
+    	for(int i = t; i < vertices.size() - (ignoreLastPlacedVertex ? 3 : 2); i++)
 		{
-    		if (LineIntersect.doLinesIntersect(start, end, vertices.get(i), vertices.get(i+1))) {
-    			System.out.println("Failed on i="+i);			
-    			return false;
+    		if (LineIntersect.doLinesIntersect(start, end, vertices.get(i), vertices.get(i + 1))) {
+    			System.out.println("Failed on i="+i);
+    			return true;
     		}
 		}
     	
-    	return true;
+    	return false;
     	
     }
 
