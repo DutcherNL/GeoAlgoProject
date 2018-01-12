@@ -1,15 +1,12 @@
 package GUI.DrawSpace;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Rectangle;
+import Space.Vertex;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.List;
-
-import javax.swing.JPanel;
 
 public class JPanel_DrawSpace extends JPanel implements MouseListener{
 
@@ -21,6 +18,23 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 	protected double zoomFactor_y = 1;
 	protected double edgeCorrection = 20;
 	
+	/**
+	 * Draw points on the screen for a given list of points
+	 * @param g The graphics object
+	 * @param points The to be drawn points
+	 * @param color The color of the points
+	 */
+	protected void drawVertices(Graphics g, List<Vertex> points, Color color) {
+		g.setColor(color);
+		for(int i=0; i<points.size();i++) {
+			g.fillOval(
+					(int)((points.get(i).x - start_x) * zoomFactor_x + edgeCorrection - pointWidth / 2),
+					(int)((points.get(i).y - start_y) * zoomFactor_y + edgeCorrection - pointWidth / 2),
+					pointWidth,
+					pointWidth);
+		}
+	}
+
 	/**
 	 * Draw points on the screen for a given list of points
 	 * @param g The graphics object
@@ -44,7 +58,7 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 	 * @param points the lines connecting all the points
 	 * @param color The color of the lines
 	 */
-	protected void drawLines(Graphics g, List<Point> points, Color color) {
+	protected void drawLines(Graphics g, List<Vertex> points, Color color) {
 		drawLines(g, points, color, color);
 	}
 	/**
@@ -54,7 +68,7 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 	 * @param color The color of the lines
 	 * @param connectColor The color of the last line
 	 */
-	protected void drawLines(Graphics g, List<Point> points, Color color, Color connectColor) {
+	protected void drawLines(Graphics g, List<Vertex> points, Color color, Color connectColor) {
 		g.setColor(color);
 
 		for(int i=0; i + 1<points.size();i++) {
@@ -82,13 +96,13 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 	 * @param points The edge points
 	 * @param color The color of the polygon
 	 */
-	protected void drawPolygon(Graphics g, List<Point> points, Color color) {
+	protected void drawPolygon(Graphics g, List<Vertex> points, Color color) {
 		g.setColor(color);
 
-		int[] xPoints = points.stream().map(p -> ((p.x - start_x) * zoomFactor_x + edgeCorrection)).mapToInt(Double::intValue).toArray();
-		int[] yPoints = points.stream().map(p -> ((p.y - start_y) * zoomFactor_y + edgeCorrection)).mapToInt(Double::intValue).toArray();
+		int[] xVertices = points.stream().map(p -> ((p.x - start_x) * zoomFactor_x + edgeCorrection)).mapToInt(Double::intValue).toArray();
+		int[] yVertices = points.stream().map(p -> ((p.y - start_y) * zoomFactor_y + edgeCorrection)).mapToInt(Double::intValue).toArray();
 
-		g.fillPolygon(xPoints, yPoints, points.size());
+		g.fillPolygon(xVertices, yVertices, points.size());
 	}
 	
 	/**
@@ -104,15 +118,7 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 		
 		this.repaint();
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		// TODO Auto-generated method stub

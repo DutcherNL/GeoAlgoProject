@@ -4,18 +4,13 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-/**
- * 
- * @author 
- *
- */
 public class Lights {
 
     public final static Color POINT_COLOR = Color.BLUE;
     public final static Color REGION_COLOR = new Color(211, 202, 188);
 
     private List<Point> lights = new ArrayList<>();
-    private List<List<Point>> visibilityRegions = new ArrayList<>();
+    private List<List<Vertex>> visibilityRegions = new ArrayList<>();
     private Room room;
 
     private List<UpdateEvent> listeners = new ArrayList<>();
@@ -27,45 +22,58 @@ public class Lights {
     public void calculateVisibilityRegions() {
         visibilityRegions.clear();
 
-        // TODO Sort room polygon in CCW order
-
         for (Point light : lights) {
-            visibilityRegions.add(calculateVisibilityRegion(light));
+            System.out.println(calculateVisibilityRegion(light));
         }
 
-        // TODO: visibilityRegions.add(new ArrayList<>(room.getPoints()));
+        // TODO: visibilityRegions.add(new ArrayList<>(room.getVertices()));
 
         this.onUpdate();
     }
 
-    private List<Point> calculateVisibilityRegion(Point light) {
-    	return null;/*
-        Stack<Point> visiblePoints = new Stack<>();
-        Iterator<Point> roomPoints = room.getPoints().iterator();
+    private List<Vertex> calculateVisibilityRegion(Point light) {
+        LinkedList<Vertex> visiblePoints = new LinkedList<>();
+        Iterator<Vertex> roomPoints = room.getVertices().iterator();
 
         visiblePoints.push(roomPoints.next());
 
         while (roomPoints.hasNext()) {
-            Point current = roomPoints.next();
-            Point previous = visiblePoints.peek();
+            Vertex current = roomPoints.next();
+            Vertex previous = visiblePoints.peek();
 
-            if (isVisibleWRT(current, previous)) {
-                while (isVisibleWRT(previous, current)) {
+            isVisibleWRT(current, previous, light);
+            visiblePoints.push(current);
+
+            /*if (isVisibleWRT(current, previous, light)) {
+                while (isVisibleWRT(previous, current, light)) {
                     visiblePoints.pop();
                     previous = visiblePoints.peek();
                 }
             }
 
-            if (isVisibleWRT(current, previous)) {
+            if (isVisibleWRT(current, previous, light)) {
                 visiblePoints.push(current);
-            }
+            }*/
         }
 
-        return visiblePoints;*/
+        return visiblePoints;
     }
 
-    private boolean isVisibleWRT(Point a, Point b) {
-        // TODO Visibility between points
+    private boolean isVisibleWRT(Vertex a, Vertex b, Point p) {
+        double angle = Utilities.computeAngle(b, p, a);
+
+        if (angle < Math.PI) {
+            return true;
+        } else {
+            double edgeAngle = Utilities.computeAngle(p, b, b.getPrevious());
+            double newAngle = Utilities.computeAngle(p, b, a);
+
+            System.out.println(edgeAngle + " vs " + newAngle);
+//
+//            if () {
+//
+//            }
+        }
 
         return new Random().nextBoolean();
     }
@@ -85,7 +93,7 @@ public class Lights {
         visibilityRegions.clear();
     }
 
-    public List<List<Point>> getVisibilityRegions() {
+    public List<List<Vertex>> getVisibilityRegions() {
         return visibilityRegions;
     }
 

@@ -1,7 +1,6 @@
 package Space;
 
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.List;
 
 /**
@@ -11,7 +10,7 @@ import java.util.List;
  */
 public class RoomFragment {
 
-	private List<Point> points;
+	private List<Vertex> vertices;
 	public boolean IsInterior = true;
 	
 	private int x_min = Integer.MAX_VALUE;
@@ -19,17 +18,17 @@ public class RoomFragment {
 	private int y_min = Integer.MAX_VALUE;
 	private int y_max = Integer.MIN_VALUE;
 	
-	public RoomFragment(List<Point> Points) {
-		this.points = Points;
+	public RoomFragment(List<Vertex> vertices) {
+		this.vertices = vertices;
 		this.calcBoundaryBox();
 	}
 	
-	public List<Point> getPoints(){
-		return points;
+	public List<Vertex> getVertices(){
+		return vertices;
 	}
 	
 	private void calcBoundaryBox() {
-		for(Point point : points) {
+		for(Vertex point : vertices) {
 			if (point.x < x_min) x_min = point.x;
 			if (point.y < y_min) y_min = point.y;
 			if (point.x > x_max) x_max = point.x;

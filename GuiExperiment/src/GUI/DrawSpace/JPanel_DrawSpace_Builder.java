@@ -2,13 +2,11 @@ package GUI.DrawSpace;
 
 import Space.Lights;
 import Space.PhaseControl.PhaseControl_Builder;
-import Space.Room;
 import Space.RoomFragment;
+import Space.Vertex;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.List;
 
 public class JPanel_DrawSpace_Builder extends JPanel_DrawSpace{
@@ -20,29 +18,31 @@ public class JPanel_DrawSpace_Builder extends JPanel_DrawSpace{
 	public final static Color EDGE_ERROR_COLOR = Color.RED;
 	
 	private PhaseControl_Builder roomBuilder;
+	private Lights lights;
 	
-	public JPanel_DrawSpace_Builder(PhaseControl_Builder RoomBuilder) {
+	public JPanel_DrawSpace_Builder(PhaseControl_Builder RoomBuilder, Lights lights) {
 		this.roomBuilder = RoomBuilder;
+		this.lights = lights;
 
 		//zoomScope();
 		this.addMouseListener(this);
 
 		this.roomBuilder.addListener(this::repaint);
+		this.lights.addListener(this::repaint);
 	}
 	
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 	
-		List<Point> roomPoints = roomBuilder.getPoints();
+		List<Vertex> roomPoints = roomBuilder.getVertices();
 
 		g.setColor(BACKGROUND_COLOR);
 		g.fillRect(0, 0, size.width, size.height);
 
-		/*
-		for (List<Point> region : lights.getVisibilityRegions()) {
+		for (List<Vertex> region : lights.getVisibilityRegions()) {
 			this.drawPolygon(g, region, Lights.REGION_COLOR);
-		}*/
+		}
 		
 		// Draw the lines, draw last line different if it can't close
 		if (this.roomBuilder.canClose())
@@ -51,15 +51,14 @@ public class JPanel_DrawSpace_Builder extends JPanel_DrawSpace{
 			this.drawLines(g, roomPoints, WORKEDGE_COLOR, EDGE_ERROR_COLOR);
 		
 		// Draw all points of the current figure
-		this.drawPoints(g, roomPoints, POINT_COLOR);
+		this.drawVertices(g, roomPoints, POINT_COLOR);
 		
 		// Draw all other fragment areas
-		for(RoomFragment fragment : roomBuilder.room.getFragments())
-		{
-			this.drawLines(g, fragment.getPoints(), EDGE_COLOR);
+		for(RoomFragment fragment : roomBuilder.room.getFragments()) {
+			this.drawLines(g, fragment.getVertices(), EDGE_COLOR);
 		}
 		
-		//this.drawPoints(g, lights.getLights(), Lights.POINT_COLOR);
+		this.drawPoints(g, lights.getLights(), Lights.POINT_COLOR);
 	}
 	
 	
@@ -75,11 +74,10 @@ public class JPanel_DrawSpace_Builder extends JPanel_DrawSpace{
 		int y = (int)((me.getY() - edgeCorrection) / zoomFactor_y + start_y);
 
 		if (me.getButton() == MouseEvent.BUTTON1) {
-			this.roomBuilder.addPoint(x, y);
-		} 
-		/*else if (me.getButton() == MouseEvent.BUTTON3) {
+			this.roomBuilder.addVertex(x, y);
+		} else if (me.getButton() == MouseEvent.BUTTON3) {
 			lights.addLight(new Point(x, y));
-		}*/
+		}
 	}
 
 	@Override

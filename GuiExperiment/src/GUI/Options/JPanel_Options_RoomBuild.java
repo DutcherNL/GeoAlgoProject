@@ -2,7 +2,6 @@ package GUI.Options;
 
 import Space.Lights;
 import Space.PhaseControl.PhaseControl_Builder;
-import Space.Room;
 import Space.UpdateEvent;
 
 import javax.swing.*;
@@ -18,7 +17,8 @@ import java.awt.event.ActionListener;
 public class JPanel_Options_RoomBuild extends JPanel_Options{
 	
 	
-	public JPanel_Options_RoomBuild(PhaseControl_Builder Builder) { super(Builder.room);
+	public JPanel_Options_RoomBuild(PhaseControl_Builder Builder, Lights lights) {
+		super(Builder.room);
 
 		LayoutManager experimentLayout = new GridLayout(6,1);
 		this.setLayout(experimentLayout);
@@ -38,7 +38,7 @@ public class JPanel_Options_RoomBuild extends JPanel_Options{
 		this.add(button_ClearPoints);
 		button_ClearPoints.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Builder.clearPoints();
+				Builder.clearVertices();
 	         }          
 		});
 
@@ -47,7 +47,7 @@ public class JPanel_Options_RoomBuild extends JPanel_Options{
 		this.add(button_RemoveLastPoint);
 		button_RemoveLastPoint.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Builder.removeLastPoint();
+				Builder.removeLastVertex();
 	         }          
 	    });
 		
@@ -63,6 +63,15 @@ public class JPanel_Options_RoomBuild extends JPanel_Options{
 			public void actionPerformed(ActionEvent e) {
 				Builder.ExportToRoom();
 	         }          
+	    });
+
+		// Compute visibility regions button
+		JButton button_Visibility = new JButton("Compute visibility regions");
+		this.add(button_Visibility);
+		button_Visibility.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				lights.calculateVisibilityRegions();
+			}
 	    });
 		
 		room.addListener(new UpdateEvent() {

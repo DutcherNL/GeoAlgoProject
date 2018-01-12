@@ -94,4 +94,8 @@ public class Room {
         for (UpdateEvent uE : listeners)
             uE.onUpdate();
     }
+
+	public List<Vertex> getVertices() {
+		return getFragments().get(0).getVertices();
+	}
 }

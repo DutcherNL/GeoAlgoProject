@@ -1,11 +1,13 @@
 package Space.PhaseControl;
 
-import java.awt.Point;
-import java.awt.Rectangle;
+import Space.LineIntersect;
+import Space.Room;
+import Space.RoomFragment;
+import Space.Vertex;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import Space.*;
 
 /**
  * Control options for the first phase of the program. Constructing of the room.
@@ -15,9 +17,9 @@ import Space.*;
 public class PhaseControl_Builder extends PhaseControl{
 
 	/**
-	 *  Store a collection of working points to create a shape.
+	 *  Store a collection of working vertices to create a shape.
 	 */
-	private List<Point> points;
+	private List<Vertex> vertices;
 
 	private boolean shapeCanClose;
 	/**
@@ -40,15 +42,15 @@ public class PhaseControl_Builder extends PhaseControl{
 	public PhaseControl_Builder(Room Room){
 		this.room = Room;
 		
-		points = new ArrayList<Point>();		
+		vertices = new ArrayList<Vertex>();
 	}
 	
 	/**
-	 * Return the current points forming a to be constructed area of the room.
-	 * @return All points of the new addition in progress
+	 * Return the current vertices forming a to be constructed area of the room.
+	 * @return All vertices of the new addition in progress
 	 */
-	public List<Point> getPoints(){
-		return points;
+	public List<Vertex> getVertices(){
+		return vertices;
 	}
 	
 	/**
@@ -57,18 +59,24 @@ public class PhaseControl_Builder extends PhaseControl{
 	 * @param y The y-coordinate
 	 * @return Whether the new position was legit (if not no point is created)
 	 */
-	public boolean addPoint(int x, int y) {
-		// Compute whether the new line point does not intersect any point in the figure
-		if (points.size() > 2)
-		{
-	    	Point start = points.get(points.size() - 1);
-	    	Point end = new Point(x,y);
+	public boolean addVertex(int x, int y) {
+		if (vertices.size() == 0) {
+			vertices.add(new Vertex(x, y, true));
+		} else if (vertices.size() == 2) {
+			Vertex previous = vertices.get(0);
+			vertices.add(new Vertex(x, y, previous));
+		} else {
+			// Compute whether the new line point does not intersect any point in the figure
+			Vertex previous = vertices.get(vertices.size() - 1);
+	    	Point currentPoint = new Point(x, y);
 	    	
-	    	if (!this.doesIntersect(start, end, false))
-	    		return false;
+	    	if (!this.doesIntersect(previous, currentPoint, false)) {
+				return false;
+			}
+
+			vertices.add(new Vertex(x, y, previous));
 		}
 
-		points.add(new Point(x,y));
 		this.computeCanClose();
 		this.onUpdate();
 		
@@ -78,18 +86,18 @@ public class PhaseControl_Builder extends PhaseControl{
 	/**
 	 * Removes the last point from the current creating shape
 	 */
-	public void removeLastPoint() {
-		if (points.size() > 0)
-			points.remove(points.size() - 1);
+	public void removeLastVertex() {
+		if (vertices.size() > 0)
+			vertices.remove(vertices.size() - 1);
 		this.computeCanClose();
 		this.onUpdate();
 	}
 	
 	/**
-	 * Clears all points from the current shape being created.
+	 * Clears all vertices from the current shape being created.
 	 */
-	public void clearPoints() {
-		points.clear();
+	public void clearVertices() {
+		vertices.clear();
 		this.onUpdate();
 	}
 	
@@ -106,8 +114,8 @@ public class PhaseControl_Builder extends PhaseControl{
 	 */
 	public void ExportToRoom() {
 		if (shapeCanClose) {
-			room.addFragment(new RoomFragment(this.points));
-			this.points = new ArrayList<Point>();
+			room.addFragment(new RoomFragment(this.vertices));
+			this.vertices = new ArrayList<Vertex>();
 			
 			this.computeCanClose();
 			this.onUpdate();
@@ -122,12 +130,12 @@ public class PhaseControl_Builder extends PhaseControl{
 	 * @return
 	 */
     private boolean computeCanClose() {
-    	if (points.size() < 3) {
+    	if (vertices.size() < 3) {
     		return this.shapeCanClose = false;
     	}
     	
-    	Point start = points.get(0);
-    	Point end = points.get(points.size() - 1);
+    	Vertex start = vertices.get(0);
+    	Vertex end = vertices.get(vertices.size() - 1);
     	return shapeCanClose = doesIntersect(start, end, true);
     }
     
@@ -142,15 +150,13 @@ public class PhaseControl_Builder extends PhaseControl{
     	if (ignoreEndpoints)
     		t = 1;
     	
-    	for(int i=t; i + 2<points.size();i++)
+    	for(int i = t; i + 2 < vertices.size(); i++)
 		{
-    		if (LineIntersect.doLinesIntersect(start, end, points.get(i), points.get(i+1))) {
+    		if (LineIntersect.doLinesIntersect(start, end, vertices.get(i), vertices.get(i+1))) {
     			System.out.println("Failed on i="+i);			
     			return false;
     		}
 		}
-    	
-    	//TODO: implement intersection with other fragments
     	
     	return true;
     	
