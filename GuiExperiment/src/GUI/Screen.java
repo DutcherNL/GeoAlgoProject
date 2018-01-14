@@ -83,12 +83,12 @@ public class Screen {
 		GBC.anchor = GridBagConstraints.CENTER;
 		
 		// Set the correct phase
-		setPhase(0);		
+		setPhase(0);
+
 		// Display the JFrame	
-		guiFrame.pack();		
+		guiFrame.pack();
+		guiFrame.setResizable(false);
 		guiFrame.setVisible(true);
-		
-		
 	}
 	
 	/**
