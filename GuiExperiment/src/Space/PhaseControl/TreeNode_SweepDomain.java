@@ -192,18 +192,18 @@ public class TreeNode_SweepDomain {
 	 * Add a new vertex to the tree
 	 * @param NewVertex
 	 */
-	public void add(SweepDomain NewDomain) {	
+	public void add(SweepDomain NewDomain, double yLine) {	
 		// If the new SweepDomain is located more left, place it in the leftnode.
-		if (this.isLower(NewDomain)) {
+		if (this.isLower(NewDomain, yLine)) {
 			if (leftNode != null)
-				this.leftNode.add(NewDomain);
+				this.leftNode.add(NewDomain, yLine);
 			else {
 				leftNode = new TreeNode_SweepDomain(NewDomain, this);
 				this.reCalcVerticalVertex();
 			}
 		} else { // It was higher, place it in the right node
 			if (rightNode != null)
-				this.rightNode.add(NewDomain);
+				this.rightNode.add(NewDomain, yLine);
 			else {
 				rightNode = new TreeNode_SweepDomain(NewDomain, this);
 				this.reCalcVerticalVertex();
@@ -238,24 +238,13 @@ public class TreeNode_SweepDomain {
 	 * @param NewDomain The Sweep domain that it is compared with
 	 * @return Whether the given domain is lower than the one in this node
 	 */
-	public boolean isLower(SweepDomain NewDomain) {
+	public boolean isLower(SweepDomain NewDomain, double yLine) {
 		
 		// calculate X coordinate
+		double localX = this.ownContent.leftXAtY(yLine);
+		double newX = NewDomain.leftXAtY(yLine);
 		
-		
-		
-		
-		//TODO: implement code to check on leftsegment intersection 
-		return 	NewDomain.leftSegment.startVertex.getX() < this.ownContent.leftSegment.startVertex.getX();
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		return newX < localX;		
 	}
 	
 	/**
@@ -333,7 +322,7 @@ public class TreeNode_SweepDomain {
 			forLeft = new Segment(vertex, vertex.getPrevious());
 		}
 		
-		this.add(new SweepDomain(forRight, this.ownContent.rightSegment));
+		this.add(new SweepDomain(forRight, this.ownContent.rightSegment), vertex.y);
 		this.ownContent.rightSegment = forLeft;
 		
 		this.reCalcVerticalVertex();

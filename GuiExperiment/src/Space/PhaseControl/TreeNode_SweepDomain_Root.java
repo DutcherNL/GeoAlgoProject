@@ -12,14 +12,14 @@ public class TreeNode_SweepDomain_Root extends TreeNode_SweepDomain{
 	}
 	
 	@Override
-	public void add(SweepDomain NewDomain) {
+	public void add(SweepDomain NewDomain, double yLine) {
 		if (this.ownContent == null) {
 			this.ownContent = NewDomain;
 			this.reCalcVerticalVertex();
 			return;
 		}
 		
-		super.add(NewDomain);
+		super.add(NewDomain, yLine);
 		
 	}
 	

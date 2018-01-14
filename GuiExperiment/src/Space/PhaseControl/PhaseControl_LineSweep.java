@@ -126,10 +126,11 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 	private void sweepProcessAdd() {
 		Vertex vertex = this.startVertices.pop();
 		SweepDomain newSweepDomain = new SweepDomain(vertex);
-		
-		this.status.add(newSweepDomain);
-		System.out.println(newSweepDomain);
 		this.yLine = vertex.getY();
+		
+		this.status.add(newSweepDomain, yLine);
+		System.out.println(newSweepDomain);
+
 	}
 	
 	private void sweepProcessSplit() {
