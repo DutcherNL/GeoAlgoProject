@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.geom.Point2D;
 import java.util.List;
 
 public class JPanel_DrawSpace extends JPanel implements MouseListener{
@@ -28,12 +29,15 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 		if (points == null) return;
 		
 		g.setColor(color);
-		for(int i=0; i<points.size();i++) {
+		for(int i=0; i<points.size();i++) {		
 			this.drawVertice(g, points.get(i));
 		}
 	}
 	
 	protected void drawVertice(Graphics g, Vertex vertex) {
+		if (vertex == null)
+			return;
+		
 		g.fillOval(
 				(int)((vertex.x - start_x) * zoomFactor_x + edgeCorrection - pointWidth / 2),
 				(int)((vertex.y - start_y) * zoomFactor_y + edgeCorrection - pointWidth / 2),
@@ -47,14 +51,15 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 	 * @param points The to be drawn points
 	 * @param color The color of the points
 	 */
-	protected void drawPoints(Graphics g, List<Point> points, Color color) {
+	protected void drawPoints(Graphics g, List<Point2D> points, Color color) {
 		if (points == null) return;
 		
 		g.setColor(color);
 		for(int i=0; i<points.size();i++) {
+			
 			g.fillOval(
-					(int)((points.get(i).x - start_x) * zoomFactor_x + edgeCorrection - pointWidth / 2),
-					(int)((points.get(i).y - start_y) * zoomFactor_y + edgeCorrection - pointWidth / 2),
+					(int)((points.get(i).getX() - start_x) * zoomFactor_x + edgeCorrection - pointWidth / 2),
+					(int)((points.get(i).getY() - start_y) * zoomFactor_y + edgeCorrection - pointWidth / 2),
 					pointWidth,
 					pointWidth);
 		}

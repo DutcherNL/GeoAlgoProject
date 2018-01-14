@@ -1,6 +1,7 @@
 package Space;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.List;
 
@@ -9,7 +10,7 @@ public class Lights {
     public final static Color POINT_COLOR = Color.BLUE;
     public final static Color REGION_COLOR = new Color(211, 202, 188);
 
-    private List<Point> lights = new ArrayList<>();
+    private List<Point2D> lights = new ArrayList<>();
     private List<List<Vertex>> visibilityRegions = new ArrayList<>();
     private Room room;
 
@@ -22,7 +23,7 @@ public class Lights {
     public void calculateVisibilityRegions() {
         visibilityRegions.clear();
 
-        for (Point light : lights) {
+        for (Point2D light : lights) {
             System.out.println(calculateVisibilityRegion(light));
         }
 
@@ -31,7 +32,7 @@ public class Lights {
         this.onUpdate();
     }
 
-    private List<Vertex> calculateVisibilityRegion(Point light) {
+    private List<Vertex> calculateVisibilityRegion(Point2D light) {
         LinkedList<Vertex> visiblePoints = new LinkedList<>();
         Iterator<Vertex> roomPoints = room.getVertices().iterator();
 
@@ -59,7 +60,7 @@ public class Lights {
         return visiblePoints;
     }
 
-    private boolean isVisibleWRT(Vertex a, Vertex b, Point p) {
+    private boolean isVisibleWRT(Vertex a, Vertex b, Point2D p) {
         double angle = Utilities.computeAngle(b, p, a);
 
         if (angle < Math.PI) {
@@ -78,13 +79,13 @@ public class Lights {
         return new Random().nextBoolean();
     }
 
-    public void addLight(Point light) {
+    public void addLight(Point2D light) {
         lights.add(light);
 
         this.onUpdate();
     }
 
-    public List<Point> getLights() {
+    public List<Point2D> getLights() {
         return lights;
     }
 

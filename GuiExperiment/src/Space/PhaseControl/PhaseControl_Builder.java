@@ -1,11 +1,13 @@
 package Space.PhaseControl;
 
 import Space.LineIntersect;
+import Space.PointDouble;
 import Space.Room;
 import Space.RoomFragment;
 import Space.Vertex;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,12 +65,12 @@ public class PhaseControl_Builder extends PhaseControl{
 		if (vertices.size() == 0) {
 			vertices.add(new Vertex(x, y, true));
 		} else if (vertices.size() == 1) {
-			Vertex previous = vertices.get(vertices.size() - 1);
+			Vertex previous = vertices.get(0);
 			vertices.add(new Vertex(x, y, previous));
 		} else {
 			// Compute whether the new line point does not intersect any point in the figure
 			Vertex previous = vertices.get(vertices.size() - 1);
-	    	Point currentPoint = new Point(x, y);
+	    	Point2D currentPoint = new PointDouble(x, y);
 
 	    	if (this.doesIntersect(previous, currentPoint, false, true)) {
 				return false;
@@ -151,7 +153,7 @@ public class PhaseControl_Builder extends PhaseControl{
      * @param end The end position of the line
      * @return Whether the line indeed intersects
      */
-    private boolean doesIntersect(Point start, Point end, boolean ignoreEndpoints, boolean ignoreLastPlacedVertex) {
+    private boolean doesIntersect(Point2D start, Point2D end, boolean ignoreEndpoints, boolean ignoreLastPlacedVertex) {
     	int t = 0;
     	if (ignoreEndpoints)
     		t = 1;

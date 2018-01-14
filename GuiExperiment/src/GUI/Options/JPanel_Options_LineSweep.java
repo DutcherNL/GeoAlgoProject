@@ -23,7 +23,7 @@ public class JPanel_Options_LineSweep  extends JPanel_Options{
 		this.add(button_StartPoints);
 		button_StartPoints.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Sweeper.ComputeStartPoints();
+				Sweeper.computePointTypes();
 				Sweeper.StartSweepStepWise();
 			    }          
 		});

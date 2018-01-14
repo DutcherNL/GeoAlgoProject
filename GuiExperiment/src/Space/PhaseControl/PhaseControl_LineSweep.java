@@ -2,6 +2,7 @@ package Space.PhaseControl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import Space.PointType;
 import Space.Room;
@@ -18,8 +19,8 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 	public TreeNode_SweepDomain status;
 	
 	
-	public List<Vertex> startVertices;
-	public int startVerticesCounter = 0;
+	public Stack<Vertex> startVertices;
+	public Stack<Vertex> splitVertices;
 	
 	
 	public PhaseControl_LineSweep(Room Room) {
@@ -36,32 +37,33 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 	/**
 	 * Put all startpoints in a tree
 	 */
-	public void ComputeStartPoints() {
+	public void computePointTypes() {
 		List<Vertex> vertices = (this.room.getFragments().get(0).getVertices());
-		TreeNode_Vertex startNodes = null;
+		TreeNode_Vertex startNodes = new TreeNode_Vertex(null, false);
+		TreeNode_Vertex splitNodes = new TreeNode_Vertex(null, false);
 		
 		Vertex sourceVertex = vertices.get(0);
 		Vertex currentVertex = sourceVertex;
 		do {
 			PointType pointType = Utilities.computePointType(currentVertex);
 			if (pointType == PointType.STARTVERTEX) {
-				if (startNodes == null)
-					startNodes = new TreeNode_Vertex(currentVertex, false);
-				else
-					startNodes.add(currentVertex);
+				startNodes.add(currentVertex);
+			} else if (pointType == PointType.SPLITVERTEX) {
+				splitNodes.add(currentVertex);
 			}
+			
 			currentVertex = currentVertex.getNext();
 			
 		} while (currentVertex != sourceVertex);
 		
 		this.startVertices = startNodes.getVertices();
+		this.splitVertices = splitNodes.getVertices();
 		
 		this.onUpdate();
 	}
 	
 	public void StartSweepStepWise() {
 		this.status = new TreeNode_SweepDomain_Root();
-		this.startVerticesCounter = 0;
 		this.yLine = Double.MAX_VALUE;
 		
 		System.out.println("Sweep ready");
@@ -72,23 +74,33 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 	 * Jump to next SweepAction
 	 */
 	public void sweepNextPoint() {
-		if (this.startVerticesCounter < this.startVertices.size()) {
 
-			Vertex topAddVertex = this.startVertices.get(this.startVerticesCounter);
-			Vertex topDomainVertex = this.status.firstVerticalVertex;
+		Vertex topDomainVertex = null;
+		Vertex topAddVertex = null;
+		Vertex topSplitVertex = null;
 		
-			if (topDomainVertex != null && Utilities.isBelow(topAddVertex, topDomainVertex)) {
-				this.sweepProcessDomain(topDomainVertex);
+		topDomainVertex = this.status.firstVerticalVertex;
+		if (!this.startVertices.isEmpty())
+			topAddVertex = this.startVertices.peek();
+		if (!this.splitVertices.isEmpty())
+			topSplitVertex = this.splitVertices.peek();
+		
+		if (Utilities.isBelow(topAddVertex, topDomainVertex)) {			
+			if (Utilities.isBelow(topSplitVertex, topDomainVertex)) {	
+				if (topDomainVertex != null)
+					this.sweepProcessDomain(topDomainVertex);
+				else
+					System.out.println("Sweep complete");
 			} else {
-				System.out.println("NextPointinAdd");
-				this.sweepProcessAdd(topAddVertex);
-			}
+				this.sweepProcessSplit();
+			}	
+			
 		} else {
-			Vertex topDomainVertex = this.status.firstVerticalVertex;
-			if (topDomainVertex != null)
-				this.sweepProcessDomain(topDomainVertex);
-			else
-				System.out.println("Looping is complete");
+			if (Utilities.isBelow(topSplitVertex, topAddVertex)) {		
+				this.sweepProcessAdd();
+			} else {
+				this.sweepProcessSplit();
+			}	
 		}
 
 		this.onUpdate();
@@ -111,13 +123,21 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 	 * Add a new DomainSweep to the status
 	 * @param vertex
 	 */
-	private void sweepProcessAdd(Vertex vertex) {
+	private void sweepProcessAdd() {
+		Vertex vertex = this.startVertices.pop();
 		SweepDomain newSweepDomain = new SweepDomain(vertex);
 		
 		this.status.add(newSweepDomain);
 		System.out.println(newSweepDomain);
-		this.startVerticesCounter++;
 		this.yLine = vertex.getY();
 	}
+	
+	private void sweepProcessSplit() {
+		Vertex vertex = this.splitVertices.pop();
+		this.yLine = vertex.getY();
+		this.status.splitDomain(vertex);
+	}
+	
+
 
 }

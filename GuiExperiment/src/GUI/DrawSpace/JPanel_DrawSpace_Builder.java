@@ -64,7 +64,6 @@ public class JPanel_DrawSpace_Builder extends JPanel_DrawSpace{
 
 	@Override
 	public void mouseClicked(MouseEvent me) {
-		System.out.println("Click");
 		int x = (int)((me.getX() - edgeCorrection) / zoomFactor_x + start_x);
 		int y = (int)((me.getY() - edgeCorrection) / zoomFactor_y + start_y);
 

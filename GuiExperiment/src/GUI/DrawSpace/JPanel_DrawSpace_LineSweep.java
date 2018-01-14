@@ -3,6 +3,7 @@ package GUI.DrawSpace;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Polygon;
 import java.awt.Stroke;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import Space.PhaseControl.PhaseControl_LineSweep;
 public class JPanel_DrawSpace_LineSweep extends JPanel_DrawSpace{
 	
 	public final static Color POINT_COLOR_START = new Color(120, 53, 53);
+	public final static Color POINT_COLOR_SPLIT = new Color(120, 53, 120);
 	public final static Color POINT_COLOR_DOMAIN = new Color(53, 120, 53);
 	public final static Color EDGE_COLOR = new Color(53, 53, 53);
 	public final static Color YLINE_COLOR = new Color(53, 53, 53);
@@ -55,6 +57,9 @@ public class JPanel_DrawSpace_LineSweep extends JPanel_DrawSpace{
 		
 		if (this.roomSweeper.startVertices != null)
 			this.drawVertices(g, this.roomSweeper.startVertices, POINT_COLOR_START);
+
+		if (this.roomSweeper.splitVertices != null)
+			this.drawVertices(g, this.roomSweeper.splitVertices, POINT_COLOR_SPLIT);
 		
 		if (this.roomSweeper.status != null) {
 			Vertex nextVertexFromDomain = this.roomSweeper.status.getTopVertex();
@@ -66,15 +71,38 @@ public class JPanel_DrawSpace_LineSweep extends JPanel_DrawSpace{
 			List<SweepDomain> Domains = new ArrayList<SweepDomain>();
 			this.roomSweeper.status.exportToList(Domains);
 			
+			SweepDomain workDomain;
+			Polygon P;
+			
 			for (int i = 0; i < Domains.size(); i++) {
-				g.setColor(new Color(40*i, 40, 40));
+				workDomain = Domains.get(i);
+				
+				g.setColor(workDomain.displaycolor);
+				/*
 				g.drawLine(
-						(int)((Domains.get(i).leftSegment.endVertex.x - start_x) * zoomFactor_x + edgeCorrection),
-						(int)((Domains.get(i).leftSegment.endVertex.y - start_y) * zoomFactor_y + edgeCorrection),
-						(int)((Domains.get(i).rightSegment.endVertex.x - start_x) * zoomFactor_x + edgeCorrection),
-						(int)((Domains.get(i).rightSegment.endVertex.y - start_y) * zoomFactor_y + edgeCorrection)
-						);
+						(int)((workDomain.leftSegment.endVertex.x - start_x) * zoomFactor_x + edgeCorrection),
+						(int)((workDomain.leftSegment.endVertex.y - start_y) * zoomFactor_y + edgeCorrection),
+						(int)((workDomain.rightSegment.endVertex.x - start_x) * zoomFactor_x + edgeCorrection),
+						(int)((workDomain.rightSegment.endVertex.y - start_y) * zoomFactor_y + edgeCorrection)
+						);*/
+				
+				P = new Polygon();
+				P.addPoint(
+						(int)((workDomain.leftSegment.startVertex.x - start_x) * zoomFactor_x + edgeCorrection),
+						(int)((workDomain.leftSegment.startVertex.y - start_y) * zoomFactor_y + edgeCorrection));
+				P.addPoint(
+						(int)((workDomain.leftSegment.endVertex.x - start_x) * zoomFactor_x + edgeCorrection),
+						(int)((workDomain.leftSegment.endVertex.y - start_y) * zoomFactor_y + edgeCorrection));
+				P.addPoint(
+						(int)((workDomain.rightSegment.endVertex.x - start_x) * zoomFactor_x + edgeCorrection),
+						(int)((workDomain.rightSegment.endVertex.y - start_y) * zoomFactor_y + edgeCorrection));
+				P.addPoint(
+						(int)((workDomain.rightSegment.startVertex.x - start_x) * zoomFactor_x + edgeCorrection),
+						(int)((workDomain.rightSegment.startVertex.y - start_y) * zoomFactor_y + edgeCorrection));
+				g.fillPolygon(P);
 			}
+			
+			
 		}
 	}
 

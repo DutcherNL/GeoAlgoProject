@@ -148,7 +148,7 @@ public class TreeNode_SweepDomain {
 	 */
 	protected void reCalcVerticalVertex() {
 		// Calculate the values of the internal SweepDomain and assume this is first
-		this.firstVerticalVertex =  this.ownContent.getHighestPoint();
+		this.firstVerticalVertex =  this.ownContent.getHighestEndPoint();
 		this.containsHighestVertex = true;
 		
 		// Check whether there is a leftnode, if so, check whether it contains a higher Vertex
@@ -239,8 +239,23 @@ public class TreeNode_SweepDomain {
 	 * @return Whether the given domain is lower than the one in this node
 	 */
 	public boolean isLower(SweepDomain NewDomain) {
+		
+		// calculate X coordinate
+		
+		
+		
+		
 		//TODO: implement code to check on leftsegment intersection 
 		return 	NewDomain.leftSegment.startVertex.getX() < this.ownContent.leftSegment.startVertex.getX();
+		
+		
+		
+		
+		
+		
+		
+		
+		
 	}
 	
 	/**
@@ -282,6 +297,46 @@ public class TreeNode_SweepDomain {
 			// reCalcVertical is either sides are null. Otherwise it's automatically done by the called add method
 		if (this.leftNode == null || this.rightNode == null)
 			this.parentNode.reCalcVerticalVertex();
+	}
+	
+	public void splitDomain(Vertex vertex) {
+		if (this.ownContent.leftXAtY(vertex.getY()) < vertex.getX()) {
+			if (this.ownContent.rightXAtY(vertex.getY()) > vertex.getX()) {
+				this.splitLocal(vertex);
+			} else { 
+				if (this.rightNode != null)
+					this.rightNode.splitDomain(vertex);
+				else {
+					System.out.println("SOMETHING WENT TERRIBLY WRONG");
+					System.out.println("splitpoint was not inside the figure...R");
+				}
+			}
+		} else {
+			if (this.leftNode!= null)
+				this.leftNode.splitDomain(vertex);
+			else {
+				System.out.println("SOMETHING WENT TERRIBLY WRONG");
+				System.out.println("splitpoint was not inside the figure...L");
+			}
+		}
+	}
+	
+	private void splitLocal(Vertex vertex) {
+		
+			// Make the new side segments
+		Segment forLeft, forRight;
+		if (vertex.getNext().x < vertex.getPrevious().x) {
+			forLeft = new Segment(vertex, vertex.getNext());
+			forRight = new Segment(vertex, vertex.getPrevious());
+		} else {
+			forRight = new Segment(vertex, vertex.getNext());
+			forLeft = new Segment(vertex, vertex.getPrevious());
+		}
+		
+		this.add(new SweepDomain(forRight, this.ownContent.rightSegment));
+		this.ownContent.rightSegment = forLeft;
+		
+		this.reCalcVerticalVertex();
 	}
 	
 	/**

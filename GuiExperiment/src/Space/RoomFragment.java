@@ -28,11 +28,11 @@ public class RoomFragment {
 	}
 	
 	private void calcBoundaryBox() {
-		for(Vertex point : vertices) {
-			if (point.x < x_min) x_min = point.x;
-			if (point.y < y_min) y_min = point.y;
-			if (point.x > x_max) x_max = point.x;
-			if (point.y > y_max) y_max = point.y;
+		for(PointDouble point : vertices) {
+			if (point.x < x_min) x_min = (int) point.x;
+			if (point.y < y_min) y_min = (int) point.y;
+			if (point.x > x_max) x_max = (int) point.x;
+			if (point.y > y_max) y_max = (int) point.y;
 		}
 	}
 	

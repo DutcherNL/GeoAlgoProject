@@ -1,11 +1,11 @@
 package Space;
 
-import java.awt.*;
+import java.awt.geom.Point2D;
 
 public class Utilities {
-    public static double computeAngle(Point A, Point Origin, Point B) {
-        double angleA = Math.atan2(A.x - Origin.x, A.y - Origin.y);
-        double angleB = Math.atan2(B.x - Origin.x, B.y - Origin.y);
+    public static double computeAngle(Point2D A, Point2D Origin, Point2D B) {
+        double angleA = Math.atan2(A.getX() - Origin.getX(), A.getY() - Origin.getY());
+        double angleB = Math.atan2(B.getX() - Origin.getX(), B.getY() - Origin.getY());
         double result = angleB - angleA;
 
         if (result < 0) {
@@ -16,7 +16,10 @@ public class Utilities {
     }
     
     public static double computeInternalAngle(Vertex Source) {
-    	return computeAngle(Source.getNext(), Source, Source.getPrevious());
+    	double result = computeAngle(Source.getNext(), Source, Source.getPrevious());
+    	
+    	System.out.println((result / (2*Math.PI) * 360) + " rad");
+    	return result;
     }
     
     /**
@@ -25,7 +28,10 @@ public class Utilities {
 	 * @param B
 	 * @return
 	 */
-	public static boolean isBelow(Point A, Point B) {
+	public static boolean isBelow(PointDouble A, PointDouble B) {
+		if (A == null) return true;
+		if (B == null) return false;
+		
 		if (A.y < B.y) return true;
 		if (A.y == B.y && A.x < B.x) return true;
 		return false;
@@ -34,13 +40,13 @@ public class Utilities {
 	
 	
 	public static PointType computePointType(Vertex Vertex) {
-		double angle;
+		double angle =  Utilities.computeInternalAngle(Vertex);
 		
 		System.out.println(Vertex.toString());
 		
 		if (Utilities.isBelow(Vertex.getPrevious(),Vertex) &&
 			Utilities.isBelow(Vertex.getNext(), Vertex)) {
-			if ((angle = Utilities.computeInternalAngle(Vertex)) < Math.PI)
+			if ((angle) < Math.PI)
 				return PointType.STARTVERTEX;
 			else if (angle > Math.PI)
 				return PointType.SPLITVERTEX;

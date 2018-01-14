@@ -6,7 +6,6 @@ import GUI.DrawSpace.JPanel_DrawSpace_LineSweep;
 import GUI.Options.JPanel_Options;
 import GUI.Options.JPanel_Options_LineSweep;
 import GUI.Options.JPanel_Options_RoomBuild;
-import GUI.Options.JPanel_Options_RoomComplete;
 import Space.Lights;
 import Space.PhaseControl.PhaseControl_Builder;
 import Space.PhaseControl.PhaseControl_LineSweep;
@@ -55,6 +54,7 @@ public class Screen {
 		guiFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		guiFrame.setTitle("GEO algorithm");
 		guiFrame.setLocationRelativeTo(null);
+		guiFrame.setLocation(100, 50);
 		
 		// Set up the layout
 		guiFrame.setLayout(new GridBagLayout());

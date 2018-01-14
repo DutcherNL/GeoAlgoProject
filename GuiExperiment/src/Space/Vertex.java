@@ -1,8 +1,10 @@
 package Space;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;;
 
-public class Vertex extends Point {
+public class Vertex extends PointDouble {
     private Vertex previous;
     private Vertex next;
     private boolean start;
@@ -52,7 +54,7 @@ public class Vertex extends Point {
     	if (this.previous == null)
     		result+= "No previous present";
     	else
-    		result+= "Next: x: " + this.next.x + " y: "+this.next.y;
+    		result+= "Previous: x: " + this.previous.x + " y: "+this.previous.y;
     	
     	return result;
     }

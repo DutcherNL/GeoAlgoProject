@@ -2,6 +2,7 @@ package Space;
 
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.geom.Point2D;
 
 /**
  * Source:
@@ -10,7 +11,7 @@ import java.awt.Rectangle;
 
 public class LineIntersect {
 	
-	public static boolean doLinesIntersect(Point a_start, Point a_end, Point b_start, Point b_end) {
+	public static boolean doLinesIntersect(Point2D a_start, Point2D a_end, Point2D b_start, Point2D b_end) {
 		return doLinesIntersect(new LineSegment(a_start, a_end), new LineSegment(b_start, b_end));
 	}
 	
@@ -65,11 +66,11 @@ public class LineIntersect {
 	 * @return <code>true</code> if the point is right of the line,
 	 *         <code>false</code> otherwise
 	 */
-	private static boolean isPointRightOfLine(LineSegment a, Point b) {
+	private static boolean isPointRightOfLine(LineSegment a, Point2D b) {
 	    // Move the image, so that a.first is on (0|0)
-	    LineSegment aTmp = new LineSegment(new Point(0, 0), new Point(
-	            a.second.x - a.first.x, a.second.y - a.first.y));
-	    Point bTmp = new Point(b.x - a.first.x, b.y - a.first.y);
+	    LineSegment aTmp = new LineSegment(new PointDouble(0, 0), new PointDouble(
+	            a.second.getX() - a.first.getX(), a.second.getY() - a.first.getY()));
+	    PointDouble bTmp = new PointDouble(b.getX() - a.first.getX(), b.getY() - a.first.getY());
 	    return crossProduct(aTmp.second, bTmp) < 0;
 	}
 	
@@ -81,30 +82,30 @@ public class LineIntersect {
 	 * @return <code>true</code> if point is on line, otherwise
 	 *         <code>false</code>
 	 */
-	private static boolean isPointOnLine(LineSegment a, Point b) {
+	private static boolean isPointOnLine(LineSegment a, Point2D b) {
 	    // Move the image, so that a.first is on (0|0)
-	    LineSegment aTmp = new LineSegment(new Point(0, 0), new Point(
-	            a.second.x - a.first.x, a.second.y - a.first.y));
-	    Point bTmp = new Point(b.x - a.first.x, b.y - a.first.y);
+	    LineSegment aTmp = new LineSegment(new PointDouble(0, 0), new PointDouble(
+	            a.second.getX() - a.first.getX(), a.second.getY() - a.first.getY()));
+	    PointDouble bTmp = new PointDouble(b.getX() - a.first.getX(), b.getY() - a.first.getY());
 	    double r = crossProduct(aTmp.second, bTmp);
 	    return Math.abs(r) < 0.000001;
 	}
 	
 	private static class LineSegment{
-		Point first;
-		Point second;
+		Point2D first;
+		Point2D second;
 		
-		public LineSegment(Point a, Point b) {
+		public LineSegment(Point2D a, Point2D b) {
 			this.first = a;
 			this.second  = b;
 		}
 		
 		public Rectangle getBoundingBox() {
 			return new Rectangle(
-					Math.min(first.x, second.x),
-					Math.min(first.y, second.y),
-					Math.max(first.x, second.x),
-					Math.max(first.y, second.y));
+					(int)Math.min(first.getX(), second.getX()),
+					(int)Math.min(first.getY(), second.getY()),
+					(int)Math.max(first.getX(), second.getX()),
+					(int)Math.max(first.getY(), second.getY()));
 		}
 	}
 	
@@ -115,8 +116,8 @@ public class LineIntersect {
      * @param b second point
      * @return the value of the cross product
      */
-    private static double crossProduct(Point a, Point b) {
-        return a.x * b.y - b.x * a.y;
+    private static double crossProduct(Point2D a, Point2D b) {
+        return a.getX() * b.getY() - b.getX() * a.getY();
     }
 	
 	

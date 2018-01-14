@@ -1,9 +1,6 @@
 package Space.PhaseControl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.sun.webkit.Utilities;
+import java.util.Stack;
 
 import Space.Vertex;
 
@@ -32,28 +29,16 @@ public class TreeNode_Vertex {
 			return leftNode.getFirstContent();
 	}
 	
-	private Vertex getPrevious() {
-		if (leftNode == null)
-			return null;
-		return leftNode.getLastContent();
+	public Stack<Vertex> getVertices(){
+		return getVertices(new Stack<Vertex>());
 	}
 	
-	private Vertex getNext() {
-		if (rightNode == null)
-			return null;
-		return rightNode.getLastContent();
-	}
-	
-	public List<Vertex> getVertices(){
-		return getVertices(new ArrayList<Vertex>());
-	}
-	
-	public List<Vertex> getVertices(List<Vertex> Vertices){
-		if (leftNode != null)
-			this.leftNode.getVertices(Vertices);
-		Vertices.add(this.ownContent);
+	public Stack<Vertex> getVertices(Stack<Vertex> Vertices){
 		if (rightNode != null)
 			this.rightNode.getVertices(Vertices);
+		Vertices.add(this.ownContent);
+		if (leftNode != null)
+			this.leftNode.getVertices(Vertices);
 		
 		return Vertices;
 	}
@@ -63,6 +48,12 @@ public class TreeNode_Vertex {
 	 * @param NewVertex
 	 */
 	public void add(Vertex NewVertex) {
+		if (this.ownContent == null) {
+			this.ownContent = NewVertex;
+			return;
+		}
+		
+		
 		if (Space.Utilities.isBelow(NewVertex, this.ownContent)) {
 			if (lowToHigh) {
 				if (leftNode != null)
@@ -89,5 +80,5 @@ public class TreeNode_Vertex {
 			}
 		}
 	}
-	
+
 }
