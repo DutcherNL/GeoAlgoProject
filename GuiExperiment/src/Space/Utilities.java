@@ -16,7 +16,7 @@ public class Utilities {
     }
     
     public static double computeInternalAngle(Vertex Source) {
-    	return computeAngle(Source.getPrevious(), Source, Source.getNext());
+    	return computeAngle(Source.getNext(), Source, Source.getPrevious());
     }
     
     /**
@@ -25,14 +25,18 @@ public class Utilities {
 	 * @param B
 	 * @return
 	 */
-	private static boolean isBelow(Point A, Point B) {
+	public static boolean isBelow(Point A, Point B) {
 		if (A.y < B.y) return true;
-		if (A.y == B.y && A.x > B.x) return true;
+		if (A.y == B.y && A.x < B.x) return true;
 		return false;
 	}
 	
-	private PointType computePointType(Vertex Vertex) {
+	
+	
+	public static PointType computePointType(Vertex Vertex) {
 		double angle;
+		
+		System.out.println(Vertex.toString());
 		
 		if (Utilities.isBelow(Vertex.getPrevious(),Vertex) &&
 			Utilities.isBelow(Vertex.getNext(), Vertex)) {

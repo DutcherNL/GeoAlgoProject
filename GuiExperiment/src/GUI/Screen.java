@@ -2,11 +2,14 @@ package GUI;
 
 import GUI.DrawSpace.JPanel_DrawSpace;
 import GUI.DrawSpace.JPanel_DrawSpace_Builder;
+import GUI.DrawSpace.JPanel_DrawSpace_LineSweep;
 import GUI.Options.JPanel_Options;
+import GUI.Options.JPanel_Options_LineSweep;
 import GUI.Options.JPanel_Options_RoomBuild;
 import GUI.Options.JPanel_Options_RoomComplete;
 import Space.Lights;
 import Space.PhaseControl.PhaseControl_Builder;
+import Space.PhaseControl.PhaseControl_LineSweep;
 import Space.Room;
 import Space.UpdateEvent;
 
@@ -202,10 +205,10 @@ public class Screen {
 	private void BuildPhase1() {
 		RemoveGeneral();
 		
-		phaseController = new PhaseControl_Builder(room);
+		phaseController = new PhaseControl_LineSweep(room);
 		this.phaseName.setText("Prepare Room");
-		this.options = new JPanel_Options_RoomComplete(room);
-		this.drawSpace = new JPanel_DrawSpace_Builder((PhaseControl_Builder)phaseController, lights);
+		this.options = new JPanel_Options_LineSweep((PhaseControl_LineSweep)phaseController);
+		this.drawSpace = new JPanel_DrawSpace_LineSweep((PhaseControl_LineSweep)phaseController);
 		
 		BuildGeneral();
 		

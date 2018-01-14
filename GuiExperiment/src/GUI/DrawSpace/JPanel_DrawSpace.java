@@ -25,14 +25,20 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 	 * @param color The color of the points
 	 */
 	protected void drawVertices(Graphics g, List<Vertex> points, Color color) {
+		if (points == null) return;
+		
 		g.setColor(color);
 		for(int i=0; i<points.size();i++) {
-			g.fillOval(
-					(int)((points.get(i).x - start_x) * zoomFactor_x + edgeCorrection - pointWidth / 2),
-					(int)((points.get(i).y - start_y) * zoomFactor_y + edgeCorrection - pointWidth / 2),
-					pointWidth,
-					pointWidth);
+			this.drawVertice(g, points.get(i));
 		}
+	}
+	
+	protected void drawVertice(Graphics g, Vertex vertex) {
+		g.fillOval(
+				(int)((vertex.x - start_x) * zoomFactor_x + edgeCorrection - pointWidth / 2),
+				(int)((vertex.y - start_y) * zoomFactor_y + edgeCorrection - pointWidth / 2),
+				pointWidth,
+				pointWidth);
 	}
 
 	/**
@@ -42,6 +48,8 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 	 * @param color The color of the points
 	 */
 	protected void drawPoints(Graphics g, List<Point> points, Color color) {
+		if (points == null) return;
+		
 		g.setColor(color);
 		for(int i=0; i<points.size();i++) {
 			g.fillOval(
@@ -143,5 +151,10 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 	public void mouseReleased(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 	}
+	
+	@Override
+	public Dimension getPreferredSize() {
+	      return size;
+}
 
 }

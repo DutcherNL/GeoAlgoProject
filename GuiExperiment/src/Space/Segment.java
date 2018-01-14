@@ -8,4 +8,14 @@ public class Segment {
 		this.startVertex = start;
 		this.endVertex = end;
 	}
+	
+	public Vertex getHighestValue() {
+		if (Utilities.isBelow(startVertex, endVertex))
+			return startVertex;
+		return endVertex;
+	}
+	
+	public String toString() {
+		return "From {" + startVertex.x + "," + startVertex.y + "} to {" + endVertex.x + "," + endVertex.y + "}";
+	}
 }

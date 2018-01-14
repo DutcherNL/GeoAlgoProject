@@ -61,15 +61,10 @@ public class JPanel_DrawSpace_Builder extends JPanel_DrawSpace{
 		this.drawPoints(g, lights.getLights(), Lights.POINT_COLOR);
 	}
 	
-	
-	@Override
-	public Dimension getPreferredSize() {
-	      return size;
-	   }
-	
 
 	@Override
 	public void mouseClicked(MouseEvent me) {
+		System.out.println("Click");
 		int x = (int)((me.getX() - edgeCorrection) / zoomFactor_x + start_x);
 		int y = (int)((me.getY() - edgeCorrection) / zoomFactor_y + start_y);
 
@@ -78,29 +73,5 @@ public class JPanel_DrawSpace_Builder extends JPanel_DrawSpace{
 		} else if (me.getButton() == MouseEvent.BUTTON3) {
 			lights.addLight(new Point(x, y));
 		}
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent me) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent me) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent me) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent me) {
-		// TODO Auto-generated method stub
-		
-	}
+}
 }

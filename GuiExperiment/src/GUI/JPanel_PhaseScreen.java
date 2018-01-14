@@ -57,7 +57,6 @@ public class JPanel_PhaseScreen extends JPanel{
 	}
 	
 	public void UpdateButtonStatus() {
-		System.out.println("Update Screen");
 		this.button_Next.setEnabled(this.screen.canEnterNextPhase());
 		this.button_Previous.setEnabled(this.screen.canEnterPreviousPhase());
 	}

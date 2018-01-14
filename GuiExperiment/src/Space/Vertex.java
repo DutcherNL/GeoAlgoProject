@@ -41,4 +41,19 @@ public class Vertex extends Point {
     public void setStart(boolean start) {
         this.start = start;
     }
+    
+    public String toString() {
+    	String result = "x: "+x + " y: "+y + "  -  ";
+    	if (this.next == null)
+    		result+= "No next present";
+    	else
+    		result+= "Next: x: " + this.next.x + " y: "+this.next.y + "   -    " ;
+    	
+    	if (this.previous == null)
+    		result+= "No previous present";
+    	else
+    		result+= "Next: x: " + this.next.x + " y: "+this.next.y;
+    	
+    	return result;
+    }
 }

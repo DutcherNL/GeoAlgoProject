@@ -114,6 +114,12 @@ public class PhaseControl_Builder extends PhaseControl{
 	 */
 	public void ExportToRoom() {
 		if (shapeCanClose) {
+			// Complete the loop in the vertices
+			Vertex lastVertex = this.vertices.get(this.vertices.size() - 1);
+			lastVertex.setNext(this.vertices.get(0));
+			this.vertices.get(0).setPrevious(lastVertex);
+			
+			// Add the fragment to the room
 			room.addFragment(new RoomFragment(this.vertices));
 			this.vertices = new ArrayList<Vertex>();
 			
