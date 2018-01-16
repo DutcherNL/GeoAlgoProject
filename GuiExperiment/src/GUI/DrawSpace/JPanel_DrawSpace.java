@@ -13,12 +13,12 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 
 	protected Dimension size = new Dimension(800,800);
 	protected int pointWidth = 10;
-	protected double start_x = 0;
-	protected double start_y = 0;
 	protected double zoomFactor_x = 1;
-	protected double zoomFactor_y = 1;
+	protected double zoomFactor_y = -1;
 	protected double edgeCorrection = 20;
-	
+	protected double start_x = 0;
+	protected double start_y = size.height - edgeCorrection;
+
 	/**
 	 * Draw points on the screen for a given list of points
 	 * @param g The graphics object
