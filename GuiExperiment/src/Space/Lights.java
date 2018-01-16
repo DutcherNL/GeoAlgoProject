@@ -40,30 +40,33 @@ public class Lights {
         boolean previousCutOff = false;
         int i = 1;
         boolean fullIteration = false;
+        boolean CW = false;
 
         while (!fullIteration) {
-            fullIteration = visiblePoints.getLast().equals(room.getVertices().get(i)) || (visiblePoints.size() >= 2 && visiblePoints.get(visiblePoints.size() - 2).equals(room.getVertices().get(i)));
+            fullIteration = visiblePoints.getLast().equals(room.getVertices().get(i)) || (visiblePoints.size() >= 2 && visiblePoints.get(visiblePoints.size() - 2).equals(room.getVertices().get(i))) || (visiblePoints.size() >= 3 && visiblePoints.get(visiblePoints.size() - 3).equals(room.getVertices().get(i)));
 
             boolean nextCutOff = false;
             Vertex current = new Vertex(room.getVertices().get(i));
             Vertex previous = new Vertex(visiblePoints.peek());
 
-            if (isVisibleWRT(current, previous, light)) {
+            if (isVisibleWRT(current, previous, light, CW)) {
                 while (visiblePoints.size() >= 1 && isCCWWRT(previous, current, light)) {
                     visiblePoints.pop();
                     nextCutOff = true;
                     previous = visiblePoints.peek();
                 }
+                CW = false;
             } else {
                 if (fullIteration) {
                     visiblePoints.removeLast();
                     fullIteration = false;
                 }
                 previousCutOff = true;
+                CW = true;
             }
 
             if (previous != null) {
-                if (isVisibleWRT(current, previous, light)) {
+                if (isVisibleWRT(current, previous, light, CW)) {
                     if (previousCutOff) {
                         visiblePoints.push(createPreviousInnerVertex(previous, current, light));
                     }
@@ -90,16 +93,16 @@ public class Lights {
         return createPolygon(visiblePoints);
     }
 
-    private boolean isVisibleWRT(Vertex a, Vertex b, Point2D p) {
+    private boolean isVisibleWRT(Vertex a, Vertex b, Point2D p, boolean CW) {
         double angle = Utilities.computeAngle(b, p, a);
 
         if (angle < Math.PI) {
             return true;
-        } else {
+        } else if (!CW){
             double edgeAngle = Utilities.computeAngle(p, b, b.getPrevious());
             double newAngle = Utilities.computeAngle(p, b, a);
 
-            if (edgeAngle >= newAngle) {
+            if (edgeAngle > newAngle) {
                 return true;
             }
         }

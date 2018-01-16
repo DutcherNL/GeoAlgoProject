@@ -28,9 +28,7 @@ public class Line extends Segment{
 			double x = segment.getStartVertex().x;
 			double y = formula.getY(x);
 
-			if ((this.startVertex.y <= y && y <= this.endVertex.y) || (this.startVertex.y >= y && y >= this.endVertex.y)) {
-				return new Vertex(x, y);
-			}
+			return new Vertex(x, y);
 		} else {
 			LineFormula f1 = new LineFormula(this.startVertex, this.endVertex);
 			LineFormula f2 = new LineFormula(segment.startVertex, segment.endVertex);

@@ -30,11 +30,11 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 		
 		g.setColor(color);
 		for(int i=0; i<points.size();i++) {		
-			this.drawVertice(g, points.get(i));
+			this.drawVertix(g, points.get(i));
 		}
 	}
 	
-	protected void drawVertice(Graphics g, Vertex vertex) {
+	protected void drawVertix(Graphics g, Vertex vertex) {
 		if (vertex == null)
 			return;
 		
