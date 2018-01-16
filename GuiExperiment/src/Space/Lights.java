@@ -1,5 +1,7 @@
 package Space;
 
+import com.sun.xml.internal.ws.developer.Serialization;
+
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.*;
@@ -167,6 +169,8 @@ public class Lights {
     public List<Point2D> getLights() {
         return lights;
     }
+
+    public void setLights(List<Point2D> lights) { this.lights = lights; }
 
     public void clear() {
         lights.clear();

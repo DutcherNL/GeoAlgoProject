@@ -11,9 +11,12 @@ import Space.PhaseControl.PhaseControl_Builder;
 import Space.PhaseControl.PhaseControl_LineSweep;
 import Space.Room;
 import Space.UpdateEvent;
+import Space.Vertex;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Point2D;
+import java.io.*;
 
 
 /**
@@ -193,7 +196,7 @@ public class Screen {
 		
 		phaseController = new PhaseControl_Builder(room);
 		this.phaseName.setText("Draw Room");
-		this.options = new JPanel_Options_RoomBuild((PhaseControl_Builder)this.phaseController, lights);
+		this.options = new JPanel_Options_RoomBuild(this, (PhaseControl_Builder)this.phaseController, lights);
 		drawSpace = new JPanel_DrawSpace_Builder((PhaseControl_Builder)this.phaseController, lights);
 		
 		BuildGeneral();
@@ -212,6 +215,24 @@ public class Screen {
 		
 		BuildGeneral();
 		
+	}
+
+	public void saveState() throws IOException {
+		ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("./state.dat"));
+		out.writeObject(lights.getLights());
+		out.writeObject(room.getVertices());
+		out.close();
+	}
+
+	public void loadState() throws IOException, ClassNotFoundException {
+		// load lights
+		// fix vertices prev/next pointers
+		// load room vertices
+		ObjectInputStream in = new ObjectInputStream(new FileInputStream("./state.dat"));
+		lights.setLights((java.util.List<Point2D>) in.readObject());
+		room.setVertices((java.util.List<Vertex>) in.readObject());
+
+		this.drawSpace.repaint();
 	}
 	
 }
