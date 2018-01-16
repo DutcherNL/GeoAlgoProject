@@ -229,7 +229,8 @@ public class Screen {
 		// fix vertices prev/next pointers
 		// load room vertices
 		ObjectInputStream in = new ObjectInputStream(new FileInputStream("./state.dat"));
-		lights.setLights((java.util.List<Point2D>) in.readObject());
+		java.util.List<Point2D> lightsList = (java.util.List<Point2D>) in.readObject();
+		lights.setLights(lightsList);
 		room.setVertices((java.util.List<Vertex>) in.readObject());
 
 		this.drawSpace.repaint();

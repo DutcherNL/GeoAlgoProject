@@ -2,13 +2,10 @@ package GUI.DrawSpace;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Polygon;
-import java.awt.Stroke;
 import java.util.ArrayList;
 import java.util.List;
 
-import Space.Lights;
 import Space.RoomFragment;
 import Space.SweepDomain;
 import Space.Vertex;
@@ -65,7 +62,7 @@ public class JPanel_DrawSpace_LineSweep extends JPanel_DrawSpace{
 			Vertex nextVertexFromDomain = this.roomSweeper.status.getTopVertex();
 			if (nextVertexFromDomain != null) {
 				g.setColor(POINT_COLOR_DOMAIN);
-				this.drawVertice(g, nextVertexFromDomain);
+				this.drawVertix(g, nextVertexFromDomain);
 			}
 			
 			List<SweepDomain> Domains = new ArrayList<SweepDomain>();
