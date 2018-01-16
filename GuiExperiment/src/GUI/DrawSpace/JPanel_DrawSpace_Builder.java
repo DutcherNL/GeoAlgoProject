@@ -43,21 +43,25 @@ public class JPanel_DrawSpace_Builder extends JPanel_DrawSpace{
 		for (List<Vertex> region : lights.getVisibilityRegions()) {
 			this.drawPolygon(g, region, Lights.REGION_COLOR);
 		}
-		
+
 		// Draw the lines, draw last line different if it can't close
-		if (this.roomBuilder.canClose())
+		if (this.roomBuilder.canClose()) {
 			this.drawLines(g, roomPoints, WORKEDGE_COLOR);
-		else
+		}
+		else {
 			this.drawLines(g, roomPoints, WORKEDGE_COLOR, EDGE_ERROR_COLOR);
-		
+		}
+
 		// Draw all points of the current figure
 		this.drawVertices(g, roomPoints, POINT_COLOR);
-		
+
+		this.drawPoints(g, lights.getTemp(), Color.MAGENTA);
+
 		// Draw all other fragment areas
 		for(RoomFragment fragment : roomBuilder.room.getFragments()) {
 			this.drawLines(g, fragment.getVertices(), EDGE_COLOR);
 		}
-		
+
 		this.drawPoints(g, lights.getLights(), Lights.POINT_COLOR);
 	}
 	

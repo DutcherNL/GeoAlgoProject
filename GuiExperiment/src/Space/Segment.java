@@ -10,7 +10,7 @@ public class Segment {
 		this.startVertex = start;
 		this.endVertex = end;
 	}
-	
+
 	public Vertex getHighestValue() {
 		if (Utilities.isBelow(startVertex, endVertex))
 			return endVertex;
@@ -55,4 +55,15 @@ public class Segment {
 		return new PointDouble(x, y);
 	}
 	
+	public boolean isVertical() {
+			return startVertex.x == endVertex.x;
+	}
+
+	public Vertex getStartVertex() {
+		return startVertex;
+	}
+
+	public Vertex getEndVertex() {
+		return endVertex;
+	}
 }
