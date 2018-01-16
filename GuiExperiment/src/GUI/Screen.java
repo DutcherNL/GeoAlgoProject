@@ -225,13 +225,9 @@ public class Screen {
 	}
 
 	public void loadState() throws IOException, ClassNotFoundException {
-		// load lights
-		// fix vertices prev/next pointers
-		// load room vertices
 		ObjectInputStream in = new ObjectInputStream(new FileInputStream("./state.dat"));
 		lights.setLights((java.util.List<Point2D>) in.readObject());
 		room.setVertices((java.util.List<Vertex>) in.readObject());
-
 		this.drawSpace.repaint();
 	}
 	
