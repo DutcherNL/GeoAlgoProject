@@ -96,6 +96,7 @@ public class Room {
     }
 
 	public List<Vertex> getVertices() {
+    	if (getFragments().size() == 0) { return new ArrayList<>(); }
 		return getFragments().get(0).getVertices();
 	}
 
