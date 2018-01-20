@@ -12,12 +12,12 @@ import java.util.List;
 public class JPanel_DrawSpace extends JPanel implements MouseListener{
 
 	protected Dimension size = new Dimension(800,800);
+	protected double edgeCorrection = 20;
 	protected int pointWidth = 10;
 	protected double start_x = 0;
-	protected double start_y = 0;
+	protected double start_y = size.height - edgeCorrection;;
 	protected double zoomFactor_x = 1;
-	protected double zoomFactor_y = 1;
-	protected double edgeCorrection = 20;
+	protected double zoomFactor_y = -1;
 	
 	/**
 	 * Draw points on the screen for a given list of points
@@ -56,13 +56,19 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 		
 		g.setColor(color);
 		for(int i=0; i<points.size();i++) {
+			drawPoint(g, points.get(i));
 			
-			g.fillOval(
-					(int)((points.get(i).getX() - start_x) * zoomFactor_x + edgeCorrection - pointWidth / 2),
-					(int)((points.get(i).getY() - start_y) * zoomFactor_y + edgeCorrection - pointWidth / 2),
-					pointWidth,
-					pointWidth);
 		}
+	}
+	protected void drawPoint(Graphics g, Point2D point) {
+		if (point == null)
+			return;
+		
+		g.fillOval(
+				(int)((point.getX() - start_x) * zoomFactor_x + edgeCorrection - pointWidth / 2),
+				(int)((point.getY() - start_y) * zoomFactor_y + edgeCorrection - pointWidth / 2),
+				pointWidth,
+				pointWidth);
 	}
 	
 	/**

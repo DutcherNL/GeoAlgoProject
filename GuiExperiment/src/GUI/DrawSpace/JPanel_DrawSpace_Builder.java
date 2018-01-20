@@ -59,6 +59,9 @@ public class JPanel_DrawSpace_Builder extends JPanel_DrawSpace{
 		}
 		
 		this.drawPoints(g, lights.getLights(), Lights.POINT_COLOR);
+		
+		g.setColor(Color.CYAN);		
+		this.drawPoint(g, this.roomBuilder.Intersection);
 	}
 	
 

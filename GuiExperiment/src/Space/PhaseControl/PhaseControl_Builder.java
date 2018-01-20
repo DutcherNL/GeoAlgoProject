@@ -4,6 +4,7 @@ import Space.LineIntersect;
 import Space.PointDouble;
 import Space.Room;
 import Space.RoomFragment;
+import Space.VertexSegment;
 import Space.Vertex;
 
 import java.awt.*;
@@ -17,6 +18,8 @@ import java.util.List;
  *
  */
 public class PhaseControl_Builder extends PhaseControl{
+	
+	public Point2D Intersection;
 
 	/**
 	 *  Store a collection of working vertices to create a shape.
@@ -68,12 +71,17 @@ public class PhaseControl_Builder extends PhaseControl{
 			Vertex previous = vertices.get(0);
 			vertices.add(new Vertex(x, y, previous));
 		} else {
+			
 			// Compute whether the new line point does not intersect any point in the figure
 			Vertex previous = vertices.get(vertices.size() - 1);
 	    	Point2D currentPoint = new PointDouble(x, y);
 
-	    	if (this.doesIntersect(previous, currentPoint, false, true)) {
-				return false;
+	    	if (this.doesIntersect(previous, currentPoint, false, false, true)) {
+				return false;/*
+	    		if (this.Intersection == null)
+	    			System.out.println("Intersection found, but position unknown");
+	    		else
+	    			System.out.println("Intersection at "+this.Intersection.getX() + "  " + this.Intersection.getY());*/
 			}
 
 			vertices.add(new Vertex(x, y, previous));
@@ -144,7 +152,7 @@ public class PhaseControl_Builder extends PhaseControl{
     	
     	Vertex start = vertices.get(0);
     	Vertex end = vertices.get(vertices.size() - 1);
-    	return shapeCanClose = !doesIntersect(start, end, true, false);
+    	return shapeCanClose = !doesIntersect(start, end, true, false, false);
     }
     
     /**
@@ -153,7 +161,7 @@ public class PhaseControl_Builder extends PhaseControl{
      * @param end The end position of the line
      * @return Whether the line indeed intersects
      */
-    private boolean doesIntersect(Point2D start, Point2D end, boolean ignoreEndpoints, boolean ignoreLastPlacedVertex) {
+    private boolean doesIntersect(Point2D start, Point2D end, boolean ignoreEndpoints, boolean ignoreLastPlacedVertex, boolean Store) {
     	int t = 0;
     	if (ignoreEndpoints)
     		t = 1;
@@ -161,7 +169,12 @@ public class PhaseControl_Builder extends PhaseControl{
     	for(int i = t; i < vertices.size() - (ignoreLastPlacedVertex ? 3 : 2); i++)
 		{
     		if (LineIntersect.doLinesIntersect(start, end, vertices.get(i), vertices.get(i + 1))) {
-    			System.out.println("Failed on i="+i);
+    			System.out.println("Intersected on i="+i);
+    			if (Store) {
+	    			VertexSegment S = new VertexSegment(vertices.get(i), vertices.get(i+1));
+	    			this.Intersection = S.getIntersectionPoint(new VertexSegment(new Vertex(start), new Vertex(end)));
+	    			System.out.println(this.Intersection);
+    			}
     			return true;
     		}
 		}

@@ -16,7 +16,7 @@ public class Utilities {
     }
     
     public static double computeInternalAngle(Vertex Source) {
-    	double result = computeAngle(Source.getNext(), Source, Source.getPrevious());
+    	double result = computeAngle(Source.getPrevious(), Source, Source.getNext());
     	
     	System.out.println((result / (2*Math.PI) * 360) + " rad");
     	return result;
@@ -40,6 +40,9 @@ public class Utilities {
 	
 	
 	public static PointType computePointType(Vertex Vertex) {
+		if (Vertex == null)
+			return PointType.REGULARVERTEX;
+		
 		double angle =  Utilities.computeInternalAngle(Vertex);
 		
 		System.out.println(Vertex.toString());

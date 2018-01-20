@@ -2,34 +2,31 @@ package Space;
 
 import java.awt.geom.Point2D;
 
-public class Segment {
-	public Vertex startVertex;
-	public Vertex endVertex;
+public class VertexSegment extends LineSegment{
+	public Vertex startPoint;
+	public Vertex endPoint;
 	
-	public Segment(Vertex start, Vertex end) {
-		this.startVertex = start;
-		this.endVertex = end;
+	public VertexSegment(Vertex start, Vertex end) {
+		super (start, end);
+		this.startPoint = start;
+		this.endPoint = end;
 	}
 	
 	public Vertex getHighestValue() {
-		if (Utilities.isBelow(startVertex, endVertex))
-			return endVertex;
-		return startVertex;
+		if (Utilities.isBelow(startPoint, endPoint))
+			return endPoint;
+		return startPoint;
 	}
 	public Vertex getLowestValue() {
-		if (Utilities.isBelow(startVertex, endVertex))
-			return startVertex;
-		return endVertex;
+		if (Utilities.isBelow(startPoint, endPoint))
+			return startPoint;
+		return endPoint;
 	}
 	
 	public String toString() {
-		return "From {" + startVertex.x + "," + startVertex.y + "} to {" + endVertex.x + "," + endVertex.y + "}";
+		return "From {" + startPoint.x + "," + startPoint.y + "} to {" + endPoint.x + "," + endPoint.y + "}";
 	}
 	
-	public Point2D getIntersectionPoint(Segment lineSegment) {
-		//TODO: implementation
-		return null;
-	}
 	/**
 	 * Computes the location of this segment with horizontal line at heigh y
 	 * @param y The height of the line
@@ -54,5 +51,13 @@ public class Segment {
 		double x = vertexLow.x + relativeY * (vertexHigh.x - vertexLow.x);
 		return new PointDouble(x, y);
 	}
+	
+	public Point2D getIntersectionPoint(VertexSegment lineSegment) {
+		return LineIntersect.getIntersectionPoint(this, lineSegment);
+		
+		
+	}
+	
+
 	
 }

@@ -20,7 +20,12 @@ public class Vertex extends PointDouble {
         this.start = start;
     }
 
-    public Vertex getPrevious() {
+    public Vertex(Point2D start2) {
+		// TODO remove this constructor
+    	super(start2.getX(), start2.getY());
+	}
+
+	public Vertex getPrevious() {
         return previous;
     }
 
@@ -31,7 +36,7 @@ public class Vertex extends PointDouble {
     public Vertex getNext() {
         return next;
     }
-
+    
     public void setNext(Vertex next) {
         this.next = next;
     }
@@ -57,5 +62,9 @@ public class Vertex extends PointDouble {
     		result+= "Previous: x: " + this.previous.x + " y: "+this.previous.y;
     	
     	return result;
+    }
+    
+    public String printCoordinates() {
+    	return "x: "+x + " y: "+y;
     }
 }

@@ -29,8 +29,8 @@ public class LineIntersect {
 	    if (segmentCrossAB)
 	    	System.out.println("AB intersected");
 	    if (segmentCrossBA)
-	    	System.out.println("BA intersected");
-	    */
+	    	System.out.println("BA intersected");*/
+	    
 	    
 	    return BoundingBoxes && segmentCrossAB && segmentCrossBA;
 	}
@@ -52,10 +52,10 @@ public class LineIntersect {
 	
 	private static boolean lineSegmentTouchesOrCrossesLine(LineSegment a,
 	        LineSegment b) {
-	    return isPointOnLine(a, b.first)
-	            || isPointOnLine(a, b.second)
-	            || (isPointRightOfLine(a, b.first) ^ 
-	                isPointRightOfLine(a, b.second));
+	    return isPointOnLine(a, b.startPoint)
+	            || isPointOnLine(a, b.endPoint)
+	            || (isPointRightOfLine(a, b.startPoint) ^ 
+	                isPointRightOfLine(a, b.endPoint));
 	}
 	
 	/**
@@ -69,9 +69,9 @@ public class LineIntersect {
 	private static boolean isPointRightOfLine(LineSegment a, Point2D b) {
 	    // Move the image, so that a.first is on (0|0)
 	    LineSegment aTmp = new LineSegment(new PointDouble(0, 0), new PointDouble(
-	            a.second.getX() - a.first.getX(), a.second.getY() - a.first.getY()));
-	    PointDouble bTmp = new PointDouble(b.getX() - a.first.getX(), b.getY() - a.first.getY());
-	    return crossProduct(aTmp.second, bTmp) < 0;
+	            a.endPoint.getX() - a.startPoint.getX(), a.endPoint.getY() - a.startPoint.getY()));
+	    PointDouble bTmp = new PointDouble(b.getX() - a.startPoint.getX(), b.getY() - a.startPoint.getY());
+	    return crossProduct(aTmp.endPoint, bTmp) < 0;
 	}
 	
 	/**
@@ -85,30 +85,11 @@ public class LineIntersect {
 	private static boolean isPointOnLine(LineSegment a, Point2D b) {
 	    // Move the image, so that a.first is on (0|0)
 	    LineSegment aTmp = new LineSegment(new PointDouble(0, 0), new PointDouble(
-	            a.second.getX() - a.first.getX(), a.second.getY() - a.first.getY()));
-	    PointDouble bTmp = new PointDouble(b.getX() - a.first.getX(), b.getY() - a.first.getY());
-	    double r = crossProduct(aTmp.second, bTmp);
+	            a.endPoint.getX() - a.startPoint.getX(), a.endPoint.getY() - a.startPoint.getY()));
+	    PointDouble bTmp = new PointDouble(b.getX() - a.startPoint.getX(), b.getY() - a.startPoint.getY());
+	    double r = crossProduct(aTmp.endPoint, bTmp);
 	    return Math.abs(r) < 0.000001;
-	}
-	
-	private static class LineSegment{
-		Point2D first;
-		Point2D second;
-		
-		public LineSegment(Point2D a, Point2D b) {
-			this.first = a;
-			this.second  = b;
-		}
-		
-		public Rectangle getBoundingBox() {
-			return new Rectangle(
-					(int)Math.min(first.getX(), second.getX()),
-					(int)Math.min(first.getY(), second.getY()),
-					(int)Math.max(first.getX(), second.getX()),
-					(int)Math.max(first.getY(), second.getY()));
-		}
-	}
-	
+	}	
 
     /**
      * Calculate the cross product of two points.
@@ -120,5 +101,44 @@ public class LineIntersect {
         return a.getX() * b.getY() - b.getX() * a.getY();
     }
 	
+	public static Point2D getIntersectionPoint(LineSegment a, LineSegment b) {
+		Point2D workPoint = checkVerticalIntersect(a, b);
+		if (workPoint != null)
+			return workPoint;
+		
+		return checkSingleIntersectionPoint(a, b);		
+	}
 	
+	private static Point2D checkVerticalIntersect(LineSegment A, LineSegment B) {
+		if (A.startPoint.getX() == A.endPoint.getX()) {
+			double fraction = (A.startPoint.getX() - B.endPoint.getX()) / (B.startPoint.getX() - B.endPoint.getX());
+			return new PointDouble(
+					B.endPoint.getX() + (B.startPoint.getX() - B.endPoint.getX()) * fraction,
+					B.endPoint.getY() + (B.startPoint.getY() - B.endPoint.getY()) * fraction);
+		} else if (B.startPoint.getX() == B.endPoint.getX()) {
+			double fraction = (B.startPoint.getX() - A.endPoint.getX()) / (A.startPoint.getX() - A.endPoint.getX());
+			return new PointDouble(
+					A.endPoint.getX() + (A.startPoint.getX() - A.endPoint.getX()) * fraction,
+					A.endPoint.getY() + (A.startPoint.getY() - A.endPoint.getY()) * fraction);
+		}
+		return null;
+	}
+	
+	private static Point2D checkSingleIntersectionPoint(LineSegment A, LineSegment B) {
+		double[] a = getFormula(A);
+		double[] b = getFormula(B);
+		
+		double x = (b[1] - a[1]) / (a[0] - b[0]);
+		
+		return new PointDouble(x, a[1] + a[0] * x);
+	}
+	
+
+	private static double[] getFormula(LineSegment Segment) {
+		double a = (Segment.startPoint.getY() - Segment.endPoint.getY()) / (Segment.startPoint.getX() - Segment.endPoint.getX());
+		double b = Segment.startPoint.getY() - a*Segment.startPoint.getX();
+				
+	    double[] result =  {a, b};
+	    return result;
+	}
 }

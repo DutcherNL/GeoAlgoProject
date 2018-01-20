@@ -10,13 +10,14 @@ import java.util.List;
 
 import Space.Lights;
 import Space.RoomFragment;
-import Space.SweepDomain;
+import Tree_Sweep.SweepDomain;
 import Space.Vertex;
 import Space.PhaseControl.PhaseControl_LineSweep;
 
 public class JPanel_DrawSpace_LineSweep extends JPanel_DrawSpace{
 	
 	public final static Color POINT_COLOR_START = new Color(120, 53, 53);
+	public final static Color POINT_COLOR_INTERSECT = new Color(0, 200, 100);
 	public final static Color POINT_COLOR_SPLIT = new Color(120, 53, 120);
 	public final static Color POINT_COLOR_DOMAIN = new Color(53, 120, 53);
 	public final static Color EDGE_COLOR = new Color(53, 53, 53);
@@ -42,6 +43,57 @@ public class JPanel_DrawSpace_LineSweep extends JPanel_DrawSpace{
 		g.setColor(BACKGROUND_COLOR);
 		g.fillRect(0, 0, size.width, size.height);
 		
+		if (this.roomSweeper.visualizeShape) {
+			
+		} else {
+			this.displayProgress(g);
+		}
+		
+	}
+	
+	private void displayResult(Graphics g) {
+		
+	}
+
+	private void displayProgress(Graphics g) {
+		if (this.roomSweeper.status != null) {
+			Vertex nextVertexFromDomain = this.roomSweeper.status.getHighestVertex();
+			
+			
+			List<SweepDomain> Domains = this.roomSweeper.status.exportToList();
+			
+			SweepDomain workDomain;
+			Polygon P;
+			
+			for (int i = 0; i < Domains.size(); i++) {
+				workDomain = Domains.get(i);
+				
+				g.setColor(workDomain.color);
+				
+				P = new Polygon();
+				P.addPoint(
+						(int)((workDomain.leftSegment.startPoint.x - start_x) * zoomFactor_x + edgeCorrection),
+						(int)((workDomain.leftSegment.startPoint.y - start_y) * zoomFactor_y + edgeCorrection));
+				P.addPoint(
+						(int)((workDomain.leftSegment.endPoint.x - start_x) * zoomFactor_x + edgeCorrection),
+						(int)((workDomain.leftSegment.endPoint.y - start_y) * zoomFactor_y + edgeCorrection));
+				P.addPoint(
+						(int)((workDomain.rightSegment.startPoint.x - start_x) * zoomFactor_x + edgeCorrection),
+						(int)((workDomain.rightSegment.startPoint.y - start_y) * zoomFactor_y + edgeCorrection));
+				P.addPoint(
+						(int)((workDomain.rightSegment.endPoint.x - start_x) * zoomFactor_x + edgeCorrection),
+						(int)((workDomain.rightSegment.endPoint.y - start_y) * zoomFactor_y + edgeCorrection));
+				g.fillPolygon(P);
+				
+				g.setColor(Color.black);
+				
+				if (nextVertexFromDomain != null) {
+					g.setColor(POINT_COLOR_DOMAIN);
+					this.drawVertice(g, nextVertexFromDomain);
+				}
+			}			
+		}
+		
 		// Draw all other fragment areas
 		for(RoomFragment fragment : roomSweeper.room.getFragments()) {
 			this.drawLines(g, fragment.getVertices(), EDGE_COLOR);
@@ -55,55 +107,32 @@ public class JPanel_DrawSpace_LineSweep extends JPanel_DrawSpace{
 				(int)((roomSweeper.yLine - start_y) * zoomFactor_y + edgeCorrection)
 				);
 		
-		if (this.roomSweeper.startVertices != null)
-			this.drawVertices(g, this.roomSweeper.startVertices, POINT_COLOR_START);
-
-		if (this.roomSweeper.splitVertices != null)
-			this.drawVertices(g, this.roomSweeper.splitVertices, POINT_COLOR_SPLIT);
-		
-		if (this.roomSweeper.status != null) {
-			Vertex nextVertexFromDomain = this.roomSweeper.status.getTopVertex();
-			if (nextVertexFromDomain != null) {
-				g.setColor(POINT_COLOR_DOMAIN);
-				this.drawVertice(g, nextVertexFromDomain);
-			}
-			
-			List<SweepDomain> Domains = new ArrayList<SweepDomain>();
-			this.roomSweeper.status.exportToList(Domains);
-			
-			SweepDomain workDomain;
-			Polygon P;
-			
-			for (int i = 0; i < Domains.size(); i++) {
-				workDomain = Domains.get(i);
-				
-				g.setColor(workDomain.displaycolor);
-				/*
-				g.drawLine(
-						(int)((workDomain.leftSegment.endVertex.x - start_x) * zoomFactor_x + edgeCorrection),
-						(int)((workDomain.leftSegment.endVertex.y - start_y) * zoomFactor_y + edgeCorrection),
-						(int)((workDomain.rightSegment.endVertex.x - start_x) * zoomFactor_x + edgeCorrection),
-						(int)((workDomain.rightSegment.endVertex.y - start_y) * zoomFactor_y + edgeCorrection)
-						);*/
-				
-				P = new Polygon();
-				P.addPoint(
-						(int)((workDomain.leftSegment.startVertex.x - start_x) * zoomFactor_x + edgeCorrection),
-						(int)((workDomain.leftSegment.startVertex.y - start_y) * zoomFactor_y + edgeCorrection));
-				P.addPoint(
-						(int)((workDomain.leftSegment.endVertex.x - start_x) * zoomFactor_x + edgeCorrection),
-						(int)((workDomain.leftSegment.endVertex.y - start_y) * zoomFactor_y + edgeCorrection));
-				P.addPoint(
-						(int)((workDomain.rightSegment.endVertex.x - start_x) * zoomFactor_x + edgeCorrection),
-						(int)((workDomain.rightSegment.endVertex.y - start_y) * zoomFactor_y + edgeCorrection));
-				P.addPoint(
-						(int)((workDomain.rightSegment.startVertex.x - start_x) * zoomFactor_x + edgeCorrection),
-						(int)((workDomain.rightSegment.startVertex.y - start_y) * zoomFactor_y + edgeCorrection));
-				g.fillPolygon(P);
-			}
-			
-			
+		if (this.roomSweeper.mainForm != null) {
+			this.drawVertices(g, this.roomSweeper.mainForm.getStartVertices(), POINT_COLOR_START);
+			this.drawVertices(g, this.roomSweeper.sideForm.getStartVertices(), POINT_COLOR_START);
+			this.drawVertices(g, this.roomSweeper.mainForm.getSplitVertices(), POINT_COLOR_SPLIT);
+			this.drawVertices(g, this.roomSweeper.sideForm.getSplitVertices(), POINT_COLOR_SPLIT);
 		}
+		
+		g.setColor(POINT_COLOR_INTERSECT);
+		if (this.roomSweeper.intersections != null) {
+			for(Vertex v : this.roomSweeper.intersections) {
+				g.drawLine(
+						(int)((v.getPrevious().getX() - start_x) * zoomFactor_x + edgeCorrection),
+						(int)((v.getPrevious().getY() - start_y) * zoomFactor_y + edgeCorrection),
+						(int)((v.getX() - start_x) * zoomFactor_x + edgeCorrection),
+						(int)((v.getY() - start_y) * zoomFactor_y + edgeCorrection)
+						);
+				this.drawVertice(g, v);
+				g.drawLine(
+						(int)((v.getNext().getX() - start_x) * zoomFactor_x + edgeCorrection),
+						(int)((v.getNext().getY() - start_y) * zoomFactor_y + edgeCorrection),
+						(int)((v.getX() - start_x) * zoomFactor_x + edgeCorrection),
+						(int)((v.getY() - start_y) * zoomFactor_y + edgeCorrection)
+						);
+			}
+		}
+			//this.drawPoints(g, this.roomSweeper.intersections, POINT_COLOR_INTERSECT);
+		
 	}
-
 }
