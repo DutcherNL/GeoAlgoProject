@@ -1,5 +1,8 @@
 package Space;
 
+import javafx.util.Pair;
+
+import javax.rmi.CORBA.Util;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.*;
@@ -33,74 +36,133 @@ public class Lights {
     }
 
     private List<Vertex> calculateVisibilityRegion(Point2D light) {
-        LinkedList<Vertex> visiblePoints = new LinkedList<>();
+        List<Vertex> vertices = cloneVerices(room.getVertices());
+        Stack<Vertex> visiblePoints = new Stack<>();
 
-        visiblePoints.push(new Vertex(room.getVertices().get(0)));
+        Vertex vertex = vertices.get(0);
+        Vertex lastVisible;
+        boolean isVisible;
+        boolean stackReduced;
+        boolean above = false;
+        boolean done = false;
+        while (true) {
+            isVisible = false;
+            lastVisible = (visiblePoints.size() > 0) ? visiblePoints.peek() : null;
+            if (lastVisible == null) {
+                visiblePoints.add(vertex);
+                vertex = vertex.getNext();
+                continue;
+            }
 
-        boolean previousCutOff = false;
-        int i = 1;
-        boolean fullIteration = false;
-        boolean CW = false;
+            // once we're back at the start, we're done.
+            for (int i = 0; i < Math.min(visiblePoints.size(), 3); i ++) {
+                if (!visiblePoints.get(i).isIntermediate()) {
+                    if (visiblePoints.get(i).equals(vertex)) {
+                        done = true;
+                        break;
+                    }
+                }
+            }
+            if (done) break;
 
-        while (!fullIteration) {
-            fullIteration = visiblePoints.getLast().equals(room.getVertices().get(i)) || (visiblePoints.size() >= 2 && visiblePoints.get(visiblePoints.size() - 2).equals(room.getVertices().get(i))) || (visiblePoints.size() >= 3 && visiblePoints.get(visiblePoints.size() - 3).equals(room.getVertices().get(i)));
-
-            boolean nextCutOff = false;
-            Vertex current = new Vertex(room.getVertices().get(i));
-            Vertex previous = new Vertex(visiblePoints.peek());
-
-            if (isVisibleWRT(current, previous, light, CW)) {
-                while (visiblePoints.size() >= 1 && isCCWWRT(previous, current, light)) {
+            stackReduced = false;
+            double vertexAngle = Utilities.computeAngle(visiblePoints.get(0), light, vertex);
+            if (Utilities.computeAngle(visiblePoints.get(0), light, lastVisible) < vertexAngle) {
+                isVisible = true;
+                above = false;
+            } else if ((Utilities.computeAngleZeroed(visiblePoints.get(visiblePoints.size() - 2), lastVisible, vertex) < 0 && lastVisible.equals(vertex.getPrevious())) || above) {
+                if (vertexAngle + Utilities.computeAngle(lastVisible, light, vertex) > Math.PI * 2) {
+                    visiblePoints.remove(0);
+                    continue;
+                }
+                // point is in front of current stack.
+                above = true;
+                isVisible = true;
+                while (Utilities.computeAngle(visiblePoints.get(0), light, lastVisible) >= vertexAngle) {
                     visiblePoints.pop();
-                    nextCutOff = true;
-                    previous = visiblePoints.peek();
+                    stackReduced = true;
+                    if (visiblePoints.size() <= 0) {
+                        break;
+                    }
+                    lastVisible = visiblePoints.peek();
                 }
-                CW = false;
-            } else {
-                if (fullIteration) {
-                    visiblePoints.removeLast();
-                    fullIteration = false;
+                if (visiblePoints.size() <= 0) {
+                    // entire stack wiped.
+                    visiblePoints.add(vertex);
+                    vertex = vertex.getNext();
+                    continue;
                 }
-                previousCutOff = true;
-                CW = true;
             }
 
-            if (previous != null) {
-                if (isVisibleWRT(current, previous, light, CW)) {
-                    if (previousCutOff) {
-                        visiblePoints.push(createPreviousInnerVertex(previous, current, light));
-                    }
-                    if (nextCutOff) {
-                        visiblePoints.push(createNextInnerVertex(current, previous, light));
-                    }
-                    if (!fullIteration) {
-                        visiblePoints.push(current);
-                    }
-                    previousCutOff = false;
+            if (isVisible) {
+                if (stackReduced) {
+                    visiblePoints.push(createNextInnerVertex(vertex, lastVisible, light));
+                } else if (!lastVisible.equals(vertex.getPrevious())) {
+                    visiblePoints.push(createPreviousInnerVertex(lastVisible, vertex, light));
                 }
-            } else {
-                visiblePoints.push(current);
-                previousCutOff = false;
+                visiblePoints.push(vertex);
             }
-
-            if (i < room.getVertices().size() - 1) {
-                i++;
-            } else {
-                i = 0;
-            }
+            vertex = vertex.getNext();
         }
+
+        for (Vertex visiblePoint : visiblePoints) {
+//            System.out.println(visiblePoint);
+        }
+
 
         return createPolygon(visiblePoints);
     }
 
-    private boolean isVisibleWRT(Vertex a, Vertex b, Point2D p, boolean CW) {
-        double angle = Utilities.computeAngle(b, p, a);
+    /**
+     * Provides a clone of the list of vertices, with updated next/prev relationships.
+     * To prevent destroying the source data.
+     */
+    private List<Vertex> cloneVerices(List<Vertex> vertices) {
+        List<Vertex> list = new ArrayList<>(vertices.size());
+        Vertex prev = null;
+        for (Vertex v : vertices) {
+            Vertex clone = new Vertex(v.getX(), v.getY());
+            clone.setPrevious(prev);
+            prev = clone;
+            list.add(clone);
+        }
+        list.get(0).setPrevious(list.get(vertices.size()-1));
+        return list;
+    }
+
+    /**
+     * Calculate the point p that intersects segment a--b at (global) angle `angle` from light.
+     *
+     *     a(*)-----------------(*)light
+     *  ap -> \ beta      __--//
+     *         \alpha _-''  _'
+     *        p(*)-''    _'
+     *           \     _'
+     *            \ _'
+     *           b(*)
+     *
+     * t = ap / ab = weight of b, 1-weight of a
+     */
+    private Point2D getPointFromSegmentAtAngle(Point2D light, Point2D a, Point2D b, double angle) {
+        angle -= Utilities.computeAngleTo(light, a);
+        double beta = Utilities.computeAngle(b, a, light);
+        double alpha = Math.PI - beta - angle;
+        double ap = (light.distance(a) / Math.sin(alpha)) * Math.sin(angle);
+        double t = ap / a.distance(b);
+        return new Point2D.Double(
+                a.getX() * (1 - t) + b.getX() * t,
+                a.getY() * (1 - t) + b.getY() * t
+        );
+    }
+
+    private boolean isVisibleWRT(Vertex current, Vertex lastVisible, Point2D light, boolean CW) {
+        double angle = Utilities.computeAngle(lastVisible, light, current);
 
         if (angle < Math.PI) {
             return true;
-        } else if (!CW){
-            double edgeAngle = Utilities.computeAngle(p, b, b.getPrevious());
-            double newAngle = Utilities.computeAngle(p, b, a);
+        } else if (!CW) {
+            double edgeAngle = Utilities.computeAngle(light, lastVisible, lastVisible.getPrevious());
+            double newAngle = Utilities.computeAngle(light, lastVisible, current);
 
             if (edgeAngle > newAngle) {
                 return true;
@@ -110,28 +172,34 @@ public class Lights {
         return false;
     }
 
-    private boolean isCCWWRT(Vertex a, Vertex b, Point2D p) {
-        return Utilities.computeAngle(b, p, a) < Math.PI;
+    private boolean isCCWWRT(Vertex a, Vertex b, Point2D light) {
+        return Utilities.computeAngle(b, light, a) < Math.PI;
     }
 
-    private Vertex createNextInnerVertex(Vertex current, Vertex previous, Point2D light) {
-        Line line = new Line(current, new Vertex(light));
-        Segment segment = new Segment(previous, previous.getNext());
+    /*
+     * Calculates the new intersection vertex for when the far vertex is visible but the next vertex is not
+     */
+    private Vertex createNextInnerVertex(Vertex occluder, Vertex far, Point2D light) {
+        Line line = new Line(occluder, new Vertex(light));
+        Segment segment = new Segment(far, far.getNext());
 
         Vertex intersection = line.intersect(segment);
-
+        intersection.setIntermediate(true);
         intersection.setPrevious(segment.getStartVertex());
         segment.getEndVertex().setPrevious(intersection);
 
         return intersection;
     }
 
-    private Vertex createPreviousInnerVertex(Vertex current, Vertex previous, Point2D light) {
-        Line line = new Line(current, new Vertex(light));
-        Segment segment = new Segment(previous.getPrevious(), previous);
+    /*
+     * Calculates the new intersection vertex for when the far vertex is no longer visible but the previous vertex was
+     */
+    private Vertex createPreviousInnerVertex(Vertex occluder, Vertex far, Point2D light) {
+        Line line = new Line(occluder, new Vertex(light));
+        Segment segment = new Segment(far.getPrevious(), far);
 
         Vertex intersection = line.intersect(segment);
-
+        intersection.setIntermediate(true);
         intersection.setPrevious(segment.getStartVertex());
         segment.getEndVertex().setPrevious(intersection);
 
@@ -171,7 +239,9 @@ public class Lights {
         return lights;
     }
 
-    public void setLights(List<Point2D> lights) { this.lights = lights; }
+    public void setLights(List<Point2D> lights) {
+        this.lights = lights;
+    }
 
     public void clear() {
         lights.clear();
