@@ -1,6 +1,8 @@
 package GUI.DrawSpace;
 
+import Space.LineSegment;
 import Space.Vertex;
+import Space.VertexSegment;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,13 +14,13 @@ import java.util.List;
 public class JPanel_DrawSpace extends JPanel implements MouseListener{
 
 	protected Dimension size = new Dimension(800,800);
+	protected double edgeCorrection = 20;
 	protected int pointWidth = 10;
+	protected double start_x = 0;
+	protected double start_y = size.height - edgeCorrection;;
 	protected double zoomFactor_x = 1;
 	protected double zoomFactor_y = -1;
-	protected double edgeCorrection = 20;
-	protected double start_x = 0;
-	protected double start_y = size.height - edgeCorrection;
-
+	
 	/**
 	 * Draw points on the screen for a given list of points
 	 * @param g The graphics object
@@ -56,13 +58,19 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 		
 		g.setColor(color);
 		for(int i=0; i<points.size();i++) {
+			drawPoint(g, points.get(i));
 			
-			g.fillOval(
-					(int)((points.get(i).getX() - start_x) * zoomFactor_x + edgeCorrection - pointWidth / 2),
-					(int)((points.get(i).getY() - start_y) * zoomFactor_y + edgeCorrection - pointWidth / 2),
-					pointWidth,
-					pointWidth);
 		}
+	}
+	protected void drawPoint(Graphics g, Point2D point) {
+		if (point == null)
+			return;
+		
+		g.fillOval(
+				(int)((point.getX() - start_x) * zoomFactor_x + edgeCorrection - pointWidth / 2),
+				(int)((point.getY() - start_y) * zoomFactor_y + edgeCorrection - pointWidth / 2),
+				pointWidth,
+				pointWidth);
 	}
 	
 	/**
@@ -114,6 +122,20 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 					(int) ((points.get(points.size() - 1).y - start_y) * zoomFactor_y + edgeCorrection));
 		}
 	}
+	
+	protected void drawLines(Graphics g, Color color, List<VertexSegment> Lines) {
+		g.setColor(color);
+
+		for(LineSegment line : Lines) {
+			g.drawLine(
+					(int)((line.startPoint.getX() - start_x) * zoomFactor_x + edgeCorrection),
+					(int)((line.startPoint.getY() - start_y) * zoomFactor_y + edgeCorrection),
+					(int)((line.endPoint.getX() - start_x) * zoomFactor_x + edgeCorrection),
+					(int)((line.endPoint.getY() - start_y) * zoomFactor_y + edgeCorrection)
+					);
+		}
+	}
+	
 	
 	/**
 	 * Draws a polygon from the given points

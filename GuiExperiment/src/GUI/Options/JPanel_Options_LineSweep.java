@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 
 import Space.Room;
+import Space.UpdateEvent;
 import Space.PhaseControl.PhaseControl_LineSweep;
 
 public class JPanel_Options_LineSweep  extends JPanel_Options{
@@ -19,32 +20,58 @@ public class JPanel_Options_LineSweep  extends JPanel_Options{
 		this.setLayout(experimentLayout);
 		
 		// Startpoitns button
-		JButton button_StartPoints= new JButton("Compute StartPoints");
-		this.add(button_StartPoints);
-		button_StartPoints.addActionListener(new ActionListener() {
+		JButton button_FullSweep= new JButton("Run full sweep");
+		this.add(button_FullSweep);
+		button_FullSweep.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Sweeper.computePointTypes();
-				Sweeper.StartSweepStepWise();
+					Sweeper.runFullSweep();
+			    };
+		});
+
+		
+		// Sweepline button
+		JButton button_SingleSweep= new JButton("NextSweepLine");
+		this.add(button_SingleSweep);
+		button_SingleSweep.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Sweeper.runSingleSweep();
 			    }          
 		});
 		
-		// Startpoitns button
-		JButton button_SweepPrep= new JButton("Prepare sweep");
-		this.add(button_SweepPrep);
-		button_SweepPrep.addActionListener(new ActionListener() {
+		// Print button
+		JButton button_Print= new JButton("Print");
+		this.add(button_Print);
+		button_Print.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Sweeper.StartSweepStepWise();
+				Sweeper.PrintTree();
+			    }          
+		});
+	
+		// Print button
+		JButton button_FinalCompute= new JButton("Compute Final Result");
+		this.add(button_FinalCompute);
+		button_FinalCompute.setEnabled(false);
+		button_FinalCompute.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+					Sweeper.visualizeShape = !Sweeper.visualizeShape;
+					if (Sweeper.Shape == null) {
+						Sweeper.CompleteShape();
+					}
+					Sweeper.onUpdate();
 			    }          
 		});
 		
-		// Startpoitns button
-		JButton button_SweepNext= new JButton("NextSweepLine");
-		this.add(button_SweepNext);
-		button_SweepNext.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Sweeper.sweepNextPoint();
-			    }          
+		Sweeper.addListener(new UpdateEvent() {
+			public void onUpdate() {
+				button_FinalCompute.setEnabled(Sweeper.shapeComplete);
+				button_FullSweep.setEnabled(!Sweeper.shapeComplete);
+				button_SingleSweep.setEnabled(!Sweeper.shapeComplete);
+			}
 		});
+		
+			
+	
+	
 	}
 	
 	

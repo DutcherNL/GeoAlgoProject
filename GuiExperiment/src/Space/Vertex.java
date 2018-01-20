@@ -2,8 +2,6 @@ package Space;
 
 import java.awt.geom.Point2D;
 
-;
-
 public class Vertex extends PointDouble {
     private Vertex previous;
     private Vertex next;
@@ -22,29 +20,22 @@ public class Vertex extends PointDouble {
         super(x, y);
         this.previous = previous;
         previous.setNext(this);
-        this.start = false;
     }
 
     public Vertex(double x, double y, boolean start) {
         super(x, y);
         this.start = start;
     }
-
     public Vertex(double x, double y) {
         super(x, y);
     }
 
-    public Vertex(Point2D point) {
-        super(point.getX(), point.getY());
-    }
+    public Vertex(Point2D start2) {
+		// TODO remove this constructor
+    	super(start2.getX(), start2.getY());
+	}
 
-    public Vertex(Vertex vertex) {
-        super(vertex.getX(), vertex.getY());
-        this.previous = vertex.getPrevious();
-        this.next = vertex.getNext();
-    }
-
-    public Vertex getPrevious() {
+	public Vertex getPrevious() {
         return previous;
     }
 
@@ -58,7 +49,7 @@ public class Vertex extends PointDouble {
     public Vertex getNext() {
         return next;
     }
-
+    
     public void setNext(Vertex next) {
         this.next = next;
     }
@@ -73,16 +64,20 @@ public class Vertex extends PointDouble {
     
     public String toString() {
     	String result = "x: "+x + " y: "+y + "  -  ";
-//    	if (this.next == null)
-//    		result+= "No next present";
-//    	else
-//    		result+= "Next: x: " + this.next.x + " y: "+this.next.y + "   -    " ;
-//
-//    	if (this.previous == null)
-//    		result+= "No previous present";
-//    	else
-//    		result+= "Previous: x: " + this.previous.x + " y: "+this.previous.y;
+    	if (this.next == null)
+    		result+= "No next present";
+    	else
+    		result+= "Next: x: " + this.next.x + " y: "+this.next.y + "   -    " ;
+    	
+    	if (this.previous == null)
+    		result+= "No previous present";
+    	else
+    		result+= "Previous: x: " + this.previous.x + " y: "+this.previous.y;
     	
     	return result;
+    }
+    
+    public String printCoordinates() {
+    	return "x: "+x + " y: "+y;
     }
 }
