@@ -42,9 +42,6 @@ public class JPanel_DrawSpace_LineSweep extends JPanel_DrawSpace{
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-	
-		g.setColor(BACKGROUND_COLOR);
-		g.fillRect(0, 0, size.width, size.height);
 		
 		if (this.roomSweeper.visualizeShape) {
 			this.displayResult(g);
@@ -92,7 +89,7 @@ public class JPanel_DrawSpace_LineSweep extends JPanel_DrawSpace{
 				
 				if (nextVertexFromDomain != null) {
 					g.setColor(POINT_COLOR_DOMAIN);
-					this.drawVertice(g, nextVertexFromDomain);
+					this.drawVertix(g, nextVertexFromDomain);
 				}
 			}			
 		}
@@ -124,7 +121,7 @@ public class JPanel_DrawSpace_LineSweep extends JPanel_DrawSpace{
 						(int)((v.getX() - start_x) * zoomFactor_x + edgeCorrection),
 						(int)((v.getY() - start_y) * zoomFactor_y + edgeCorrection)
 						);
-				this.drawVertice(g, v);
+				this.drawVertix(g, v);
 				g.drawLine(
 						(int)((v.getNext().getX() - start_x) * zoomFactor_x + edgeCorrection),
 						(int)((v.getNext().getY() - start_y) * zoomFactor_y + edgeCorrection),

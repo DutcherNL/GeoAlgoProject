@@ -8,15 +8,18 @@ public class Vertex extends PointDouble {
     private Vertex next;
     private boolean start;
 
-    public Vertex(int x, int y, Vertex previous) {
+    public Vertex(double x, double y, Vertex previous) {
         super(x, y);
         this.previous = previous;
         previous.setNext(this);
     }
 
-    public Vertex(int x, int y, boolean start) {
+    public Vertex(double x, double y, boolean start) {
         super(x, y);
         this.start = start;
+    }
+    public Vertex(double x, double y) {
+        super(x, y);
     }
 
     public Vertex(Point2D start2) {

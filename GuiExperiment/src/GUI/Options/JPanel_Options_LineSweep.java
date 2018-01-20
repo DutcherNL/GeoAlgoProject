@@ -20,22 +20,21 @@ public class JPanel_Options_LineSweep  extends JPanel_Options{
 		this.setLayout(experimentLayout);
 		
 		// Startpoitns button
-		JButton button_StartPoints= new JButton("Compute StartPoints");
-		this.add(button_StartPoints);
-		button_StartPoints.addActionListener(new ActionListener() {
+		JButton button_FullSweep= new JButton("Run full sweep");
+		this.add(button_FullSweep);
+		button_FullSweep.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Sweeper.computePointTypes();
-				Sweeper.StartSweepStepWise();
-			    }          
+					Sweeper.runFullSweep();
+			    };
 		});
 
 		
 		// Sweepline button
-		JButton button_SweepNext= new JButton("NextSweepLine");
-		this.add(button_SweepNext);
-		button_SweepNext.addActionListener(new ActionListener() {
+		JButton button_SingleSweep= new JButton("NextSweepLine");
+		this.add(button_SingleSweep);
+		button_SingleSweep.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Sweeper.sweepNextPoint();
+				Sweeper.runSingleSweep();
 			    }          
 		});
 		
@@ -65,6 +64,8 @@ public class JPanel_Options_LineSweep  extends JPanel_Options{
 		Sweeper.addListener(new UpdateEvent() {
 			public void onUpdate() {
 				button_FinalCompute.setEnabled(Sweeper.shapeComplete);
+				button_FullSweep.setEnabled(!Sweeper.shapeComplete);
+				button_SingleSweep.setEnabled(!Sweeper.shapeComplete);
 			}
 		});
 		

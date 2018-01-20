@@ -16,6 +16,7 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 
 	public Room room;
 	public double yLine = 0;
+	protected int shapeCounter = 1;
 	public boolean shapeComplete = false;
 	public boolean visualizeShape = false;
 	public List<VertexSegment> Shape;
@@ -38,8 +39,11 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 	
 	
 	public PhaseControl_LineSweep(Room Room) {
+		super();
 		this.room = Room;
+		this.mainForm = new Sweep_Form(this.room.getFragments().get(0).getVertices().get(0), true);
 		
+		this.setUpNextSweep();		
 	}
 	
 	@Override
@@ -48,21 +52,16 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 		return false;
 	}
 	
-	/**
-	 * Put all startpoints in a tree
-	 */
-	public void computePointTypes() {
-		
-		this.mainForm = new Sweep_Form(this.room.getFragments().get(0).getVertices().get(0), true);
-		if (this.room.getFragments().size() > 1)
-			this.sideForm = new Sweep_Form(this.room.getFragments().get(1).getVertices().get(0), true);
-		else
+	public void setUpNextSweep() {
+		if (this.room.getFragments().size() > this.shapeCounter) {
+			this.sideForm = new Sweep_Form(this.room.getFragments().get(this.shapeCounter).getVertices().get(0), true);
+			this.shapeCounter++;
+		} else {
 			this.sideForm = new Sweep_Form(null, true);
+			this.shapeComplete = true;
+			return;
+		}
 		
-		this.onUpdate();
-	}
-	
-	public void StartSweepStepWise() {
 		this.status = new TreeNode_SweepRoot(this);
 		this.intersections = new ArrayList<Vertex>();
 		this.yLine = Double.MAX_VALUE;
@@ -75,8 +74,7 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 		this.storeHighestSplit();
 		
 		
-		System.out.println("Sweep ready");
-		
+		System.out.println("Sweep ready");		
 	}
 	
 	public void storeHighestAdd() {	
@@ -162,9 +160,30 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 	}	
 	
 	/**
-	 * Jump to next SweepAction
+	 * Runs a full sweep automatically
 	 */
-	public void sweepNextPoint() {
+	public void runFullSweep() {
+		while (sweepNextPoint()) {
+			
+		}
+		setUpNextSweep();
+		this.onUpdate();
+	}
+	public void runSingleSweep() {
+		if (this.shapeComplete) {
+			return;
+		}
+		if (!sweepNextPoint()) {
+			setUpNextSweep();
+		}
+		this.onUpdate();
+	}
+	
+	/**
+	 * Runs a single sweep instance
+	 * @return Whether the sweep was succesful (i.e. not at the end)
+	 */
+	protected boolean sweepNextPoint() {
 		Vertex topDomainVertex = null;
 		
 		topDomainVertex = this.status.getHighestVertex();
@@ -175,8 +194,7 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 					this.sweepProcessDomain(topDomainVertex);
 				else {
 					System.out.println("Sweep complete");
-					this.shapeComplete = true;
-					this.onUpdate();
+					return false;
 				}
 			} else {
 				this.sweepProcessSplit();
@@ -189,10 +207,8 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 				this.sweepProcessSplit();
 			}	
 		}
-
-		this.onUpdate();
 		
-		System.out.println("\n");
+		return true;
 	}
 	
 	/**

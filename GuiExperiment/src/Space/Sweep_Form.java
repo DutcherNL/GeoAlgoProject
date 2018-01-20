@@ -3,8 +3,8 @@ package Space;
 import java.util.List;
 import java.util.Stack;
 
-import Space.PhaseControl.TreeNode_Vertex;
-import Space.PhaseControl.TreeNode_VertexRoot;
+import Tree_Sweep.TreeNode_Vertex;
+import Tree_Sweep.TreeNode_VertexRoot;
 
 public class Sweep_Form {
 	public boolean isMain;
