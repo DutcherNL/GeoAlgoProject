@@ -325,16 +325,23 @@ public abstract class TreeNode_Sweep{
  		
  		TreeNode_Sweep checkNode = this.getPreviousNode(this.getAntiType());
  		if (checkNode == null) {
- 			System.out.println("t'was null");
  			this.checkIntersectRight(y);
  			return;
  		}
 		TreeNode_Sweep storeNode;
  		
- 		double xOwn = this.segment.getHorizontalIntersection(y).getX();
-		double xAlt = checkNode.segment.getHorizontalIntersection(y).getX();
 		
-		System.out.println("LEFT "+xOwn+" "+xAlt);
+ 		double xOwn = this.segment.getHorizontalIntersection(y).getX();
+ 		double xAlt;
+ 		try{
+ 			xAlt = checkNode.segment.getHorizontalIntersection(y).getX();
+ 		}	catch (Exception e) {
+ 			// There is a nasty error where somehow the intersection of the previous element is out of range.
+ 			// Likely due to the previous element not being the previous element, I don't know why though...
+ 			System.out.println(e);
+ 			this.checkIntersectRight(y);
+ 			return;
+ 		}
 		
 		if (xAlt < xOwn) {
 			this.checkIntersectRight(y);
@@ -366,15 +373,20 @@ public abstract class TreeNode_Sweep{
  		
  		TreeNode_Sweep checkNode = this.getNextNode(this.getAntiType());
  		if (checkNode == null) {
- 			System.out.println("Null on the right");
  			return;
  		}
 		TreeNode_Sweep storeNode;
  		
  		double xOwn = this.segment.getHorizontalIntersection(y).getX();
-		double xAlt = checkNode.segment.getHorizontalIntersection(y).getX();
-		
-		System.out.println("Right "+xOwn+" "+xAlt);
+ 		double xAlt;
+ 		try{
+ 			xAlt = checkNode.segment.getHorizontalIntersection(y).getX();
+ 		}	catch (Exception e) {
+ 			// There is a nasty error where somehow the intersection of the previous element is out of range.
+ 			// Likely due to the previous element not being the previous element, I don't know why though...
+ 			System.out.println(e);
+ 			return;
+ 		}
 		
 		while (xAlt < xOwn) {
 			System.out.println("Intersection found on RIGHT side");
@@ -404,11 +416,9 @@ public abstract class TreeNode_Sweep{
  	 */
  	protected void checkAbstractMovesLeft(double y, Tree_Sweep_Type type) {
  	 		
- 		System.out.print("Abstract moves check left: ");
  		// Get the next node
  		TreeNode_Sweep checkNode = this.getPreviousNode(type);
  		if (checkNode == null) {
- 			System.out.println("Results null");
  			this.checkAbstractMovesRight(y, type);
  			return;
  		}
@@ -416,9 +426,7 @@ public abstract class TreeNode_Sweep{
  		
  		double xOwn = this.segment.getHorizontalIntersection(y).getX();
 		double xAlt = checkNode.segment.getHorizontalIntersection(y).getX();
-		
-		System.out.println("LEFT "+xOwn+" "+xAlt);
-		
+				
 		if (xAlt < xOwn) {
 			this.checkAbstractMovesRight(y,type);
 			return;
@@ -427,7 +435,7 @@ public abstract class TreeNode_Sweep{
 		while (xOwn < xAlt) {
 			// It has moved right of this
 			storeNode = checkNode.getPreviousNode(this.getAntiType());
-			System.out.println("Results in Move");
+			System.out.println("Abstract move to the right");
 			checkNode.moveRightOf(this, Tree_Sweep_Type.ALL);
 			this.changeConflictedState();
 			checkNode = storeNode;
@@ -435,15 +443,12 @@ public abstract class TreeNode_Sweep{
 	 			break;
 	 		}
 			xAlt = checkNode.segment.getHorizontalIntersection(y).getX();
-			System.out.println("LEFT "+xOwn+" "+xAlt);
 		}
  	}
  	protected void checkAbstractMovesRight(double y, Tree_Sweep_Type type) {
- 		System.out.print("Abstract moves check Right: ");
  		
  		TreeNode_Sweep checkNode = this.getNextNode(type);
  		if (checkNode == null) {
- 			System.out.println("Results null");
  			return;
  		}
 		TreeNode_Sweep storeNode;
@@ -453,7 +458,7 @@ public abstract class TreeNode_Sweep{
 		
 		while (xAlt < xOwn) {
 			// It has moved left of this
-			System.out.println("Results in Move");
+			System.out.println("Abstract move to the left");
 			storeNode = checkNode.getNextNode(type);
 			checkNode.moveLeftOf(this, Tree_Sweep_Type.ALL);
 			this.changeConflictedState();
@@ -529,28 +534,26 @@ public abstract class TreeNode_Sweep{
 	 * @param vertex
 	 * @param isMain
 	 */
-	public void add(Vertex vertex, boolean isMain) {
+	public boolean add(Vertex vertex, boolean isMain) {
 		boolean inLeftNode;
 		
 		if (this.isLower(vertex)) {
 			if (this.leftNode == null) {
 				inLeftNode = true;
 			} else {
-				this.leftNode.add(vertex, isMain);
-				return;
+				return this.leftNode.add(vertex, isMain);
 			}
 		} else {
 			if (this.rightNode == null) {
 				inLeftNode = false;
 			} else {
-				this.rightNode.add(vertex, isMain);
-				return;
+				return this.rightNode.add(vertex, isMain);
 			}
 		}
 		
-		this.addLocal(vertex, inLeftNode, isMain);
+		return this.addLocal(vertex, inLeftNode, isMain);
 	}
-	protected void addLocal(Vertex vertex, boolean inLeftNode, boolean isMain) {
+	protected boolean addLocal(Vertex vertex, boolean inLeftNode, boolean isMain) {
 		
 		// Add the primary treeNode
 		TreeNode_Sweep newSweep = new TreeNode_SweepLeft(
@@ -585,37 +588,48 @@ public abstract class TreeNode_Sweep{
 		newSweep.opposite = newSweep.rightNode;
 		newSweep.opposite.opposite = newSweep;
 		newSweep.rightNode.calcNodeVariables();
+		
+		
+		// Return whether the addition was in an outer layer
+		return !newSweep.isConflicted;
 	}
+ 	
 	/**
-	 * Split the interval of given type at the vertex
+	 * Finds the node under which the split node should be placed
+	 * @param vertex
+	 * @return
 	 */
- 	public boolean split(Vertex vertex, boolean isMain) {
-		// Find the vertex left of this point
-		// get previous point
+ 	protected TreeNode_Sweep findSplitNodeLocation(Vertex vertex) {
+ 		// Find the vertex left of this point
+ 		// get previous point
 		if (this.isLower(vertex)) {
 			if (this.leftNode == null) {
-				return false;
+				return null;
 			} else {
-				return this.leftNode.split(vertex, isMain);
+				return this.leftNode.findSplitNodeLocation(vertex);
 			}
 		} else {
 			if (this.rightNode == null) {
 				// Place it here
 			} else {
-				if (this.rightNode.split(vertex, isMain)) {
-					return true;
+				TreeNode_Sweep splitLocation = this.rightNode.findSplitNodeLocation(vertex);
+				if (splitLocation != null) {
+					return splitLocation;
 				} else {
 					// place it in this node
 				}
 			}
 		}
 		
-		this.splitLocal(vertex, isMain);
-		
-		return true;
-	}
- 	
- 	protected void splitLocal(Vertex vertex, boolean isMain) {		
+		return this;
+ 	}
+ 	/**
+ 	 * Locally splits the given shape
+ 	 * @param vertex
+ 	 * @param isMain
+ 	 * @return
+ 	 */
+ 	protected boolean splitLocal(Vertex vertex, boolean isMain) {		
  		// Make the left side node
  		TreeNode_Sweep newSweep = new TreeNode_SweepRight(
 				new VertexSegment(vertex.getPrevious(), vertex),
@@ -630,10 +644,8 @@ public abstract class TreeNode_Sweep{
  		
 		if (this.isOfType(isMain ? Tree_Sweep_Type.MAIN : Tree_Sweep_Type.JOIN)) {
 			newSweep.isConflicted = this.isConflicted;
-			System.out.println("Checkpoint AA");
 		} else {
 			newSweep.isConflicted = this.isLeft;
-			System.out.println("Checkpoint GH");
 		}
 		
 		// Sort the local data
@@ -646,20 +658,23 @@ public abstract class TreeNode_Sweep{
 				newSweep);
 		
 		// Get the left part of this form
-		TreeNode_Sweep leftNode = newSweep.getPreviousNode(this.type);
+		TreeNode_Sweep leftNode = newSweep.getPreviousNode(newSweep.type);
 		
 		// Transfer Data
 		newSweep.rightNode.opposite = leftNode.opposite;
 		leftNode.opposite.opposite = newSweep.rightNode;
 		leftNode.opposite.data = newSweep.rightNode.data;
 				
-		newSweep.data = this.data;
+		newSweep.data = leftNode.data;
 		leftNode.opposite = newSweep;
 		newSweep.opposite = leftNode;
 		newSweep.rightNode.isConflicted = newSweep.isConflicted;
 		
  		newSweep.rightNode.calcNodeVariables();
  		// Result is complete, output accurate
+ 		
+ 		// Return whether the split was in a non-conflicted area
+ 		return !newSweep.isConflicted;
  	}
  	
 
@@ -692,7 +707,7 @@ public abstract class TreeNode_Sweep{
 			if (!Space.Utilities.isBelow(
 					this.leftNode.highestVertex.segment.getLowestValue(),
 					highestVertex.segment.getLowestValue()))	{
-				this.highestVertex = this.leftNode.highestVertex;
+				this.highestVertex = this.leftNode.highestVertex;					
 			}
 			if (this.leftNode.containsMain)
 				this.containsMain = true;

@@ -33,7 +33,7 @@ public class Utilities {
 		if (B == null) return false;
 		
 		if (A.y < B.y) return true;
-		if (A.y == B.y && A.x < B.x) return true;
+		if (A.y == B.y && A.x > B.x) return true;
 		return false;
 	}
 	

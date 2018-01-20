@@ -17,17 +17,19 @@ public class TreeNode_SweepRoot extends TreeNode_Sweep{
 	}
 	
 	@Override
-	public void add(Vertex vertex, boolean isMain) {
+	public boolean add(Vertex vertex, boolean isMain) {
 		if (this.leftNode == null) {
-			this.addLocal(vertex, true, isMain);
+			return this.addLocal(vertex, true, isMain);
 		} else {
-			this.leftNode.add(vertex, isMain);
+			return this.leftNode.add(vertex, isMain);
 		}
 	}
-	@Override
+	/**
+	 * Split the interval of given type at the vertex
+	 */
 	public boolean split(Vertex vertex, boolean isMain) {
 		if (this.leftNode != null)
-			return this.leftNode.split(vertex, isMain);
+			return leftNode.findSplitNodeLocation(vertex).splitLocal(vertex, isMain);
 		return false;
 	}
 	

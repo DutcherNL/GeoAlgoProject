@@ -1,6 +1,8 @@
 package GUI.DrawSpace;
 
+import Space.LineSegment;
 import Space.Vertex;
+import Space.VertexSegment;
 
 import javax.swing.*;
 import java.awt.*;
@@ -108,6 +110,20 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 					(int) ((points.get(points.size() - 1).y - start_y) * zoomFactor_y + edgeCorrection));
 		}
 	}
+	
+	protected void drawLines(Graphics g, Color color, List<VertexSegment> Lines) {
+		g.setColor(color);
+
+		for(LineSegment line : Lines) {
+			g.drawLine(
+					(int)((line.startPoint.getX() - start_x) * zoomFactor_x + edgeCorrection),
+					(int)((line.startPoint.getY() - start_y) * zoomFactor_y + edgeCorrection),
+					(int)((line.endPoint.getX() - start_x) * zoomFactor_x + edgeCorrection),
+					(int)((line.endPoint.getY() - start_y) * zoomFactor_y + edgeCorrection)
+					);
+		}
+	}
+	
 	
 	/**
 	 * Draws a polygon from the given points

@@ -13,7 +13,6 @@ public class TreeNode_SweepLeft extends TreeNode_Sweep{
 	@Override
 	protected void update() {
 		if (this.segment.endPoint == this.opposite.segment.startPoint) {
-				System.out.println("Left BB");
 				// End of the domain is reached
 				this.checkIntersectLeft(this.segment.endPoint.y);
 				this.opposite.checkIntersectLeft(this.segment.endPoint.y);
@@ -22,7 +21,6 @@ public class TreeNode_SweepLeft extends TreeNode_Sweep{
 				this.parentNode.calcNodeVariables();
 				this.opposite.parentNode.calcNodeVariables();
 			} else {
-				System.out.println("Left AA");
 				this.checkIntersectLeft(this.segment.endPoint.y);
 				this.segment = new VertexSegment(this.segment.endPoint, this.segment.endPoint.getNext());
 				this.calcNodeVariables();

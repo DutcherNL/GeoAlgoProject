@@ -10,6 +10,7 @@ import Tree_Sweep.TreeNode_SweepRoot;
 import Space.Sweep_Form;
 import Space.Utilities;
 import Space.Vertex;
+import Space.VertexSegment;
 
 public class PhaseControl_LineSweep  extends PhaseControl{
 
@@ -17,6 +18,7 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 	public double yLine = 0;
 	public boolean shapeComplete = false;
 	public boolean visualizeShape = false;
+	public List<VertexSegment> Shape;
 	
 	public TreeNode_SweepRoot status;
 	
@@ -29,10 +31,6 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 	private List<Vertex> addJOIN;
 	private List<Vertex> splitMAIN;
 	private List<Vertex> splitJOIN;
-	private int addMAINCounter = 0;
-	private int addJOINCounter = 0;
-	private int splitMAINCounter = 0;
-	private int splitJOINCounter = 0;
 	private Vertex highestAdd;
 	private Vertex highestSplit;
 	private boolean highestAddInMain = false;
@@ -73,10 +71,6 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 		this.addJOIN = sideForm.getStartVertices();
 		this.splitMAIN = mainForm.getSplitVertices();
 		this.splitJOIN = sideForm.getSplitVertices();
-		this.addMAINCounter = 0;
-		this.addJOINCounter = 0;
-		this.splitMAINCounter = 0;
-		this.splitJOINCounter = 0;
 		this.storeHighestAdd();
 		this.storeHighestSplit();
 		
@@ -91,37 +85,35 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 			return;
 		}
 		
-		System.out.println("XXXP "+this.addMAIN.size() + this.addJOIN.size());
-		
 		
 		// If either list has reached the end
-		if (this.addMAIN.size() <= this.addMAINCounter) {
-			if (this.addJOIN.size() <= this.addJOINCounter) {
+		if (this.addMAIN.size() == 0) {
+			if (this.addJOIN.size() == 0) {
 				this.highestAdd = null; 
 			} else {
-				this.highestAdd = this.addJOIN.get(this.addJOINCounter);
+				this.highestAdd = this.addJOIN.get(0);
+				this.addJOIN.remove(0);
 				this.highestAddInMain = false;
-				this.addJOINCounter++;
 			}
 		} else {
-			System.out.println("HUUUHH");
-			if (this.addJOIN.size() < this.addJOINCounter) {
-				this.highestAdd = this.addMAIN.get(this.addMAINCounter);
+			if (this.addJOIN.size() == 0) {
+				this.highestAdd = this.addMAIN.get(0);
+				this.addMAIN.remove(0);
 				this.highestAddInMain = true;
-				this.addMAINCounter++;
-			} else {
-				Vertex startMain = this.addMAIN.get(this.addMAINCounter);
-				Vertex startSide = this.addJOIN.get(this.addJOINCounter);
+			} else {				
+				
+				Vertex startMain = this.addMAIN.get(0);
+				Vertex startSide = this.addJOIN.get(0);
 				
 				// Both have points, check order
 				if (Utilities.isBelow(startMain, startSide)) {
-					this.highestAdd = startSide;
+					this.highestAdd = this.addJOIN.get(0);
+					this.addJOIN.remove(0);
 					this.highestAddInMain = false;
-					this.addJOINCounter++;
 				} else {
 					this.highestAdd = startMain;
+					this.addMAIN.remove(0);
 					this.highestAddInMain = true;
-					this.addMAINCounter++;
 				}				
 			}
 		}
@@ -130,40 +122,41 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 	}
 	public void storeHighestSplit() {	
 		if (this.splitMAIN == null || this.splitJOIN == null) {
-			highestAdd = null;
+			highestSplit = null;
 			return;
 		}
 		
 		// If either list has reached the end
-		if (this.splitMAIN.size() > this.splitMAINCounter) {
-			if (this.splitJOIN.size() < this.splitJOINCounter) {
-				this.highestSplit = null; 
-			} else {
-				this.highestSplit = this.splitJOIN.get(this.splitJOINCounter);
-				this.highestSplitInMain = false;
-				this.splitJOINCounter++;
-			}
-		} else {
-			if (this.splitJOIN.size() < this.splitJOINCounter) {
-				this.highestSplit = this.splitMAIN.get(this.splitMAINCounter);
-				this.highestSplitInMain = true;
-				this.splitMAINCounter++;
-			} else {
-				Vertex startMain = this.splitMAIN.get(this.splitMAINCounter);
-				Vertex startSide = this.splitJOIN.get(this.splitJOINCounter);
-				
-				// Both have points, check order
-				if (Utilities.isBelow(startMain, startSide)) {
-					this.highestSplit = startSide;
-					this.highestSplitInMain = false;
-					this.splitJOINCounter++;
+				if (this.splitMAIN.size() == 0) {
+					if (this.splitJOIN.size() == 0) {
+						this.highestSplit = null; 
+					} else {
+						this.highestSplit = this.splitJOIN.get(0);
+						this.splitJOIN.remove(0);
+						this.highestSplitInMain = false;
+					}
 				} else {
-					this.highestSplit = startMain;
-					this.highestSplitInMain = true;
-					this.splitMAINCounter++;
-				}				
-			}
-		}
+					if (this.splitJOIN.size() == 0) {
+						this.highestSplit = this.splitMAIN.get(0);
+						this.splitMAIN.remove(0);
+						this.highestSplitInMain = true;
+					} else {						
+						
+						Vertex startMain = this.splitMAIN.get(0);
+						Vertex startSide = this.splitJOIN.get(0);
+						
+						// Both have points, check order
+						if (Utilities.isBelow(startMain, startSide)) {
+							this.highestSplit = this.splitJOIN.get(0);
+							this.splitJOIN.remove(0);
+							this.highestSplitInMain = false;
+						} else {
+							this.highestSplit = startMain;
+							this.splitMAIN.remove(0);
+							this.highestSplitInMain = true;
+						}				
+					}
+				}
 		
 		
 	}	
@@ -172,10 +165,6 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 	 * Jump to next SweepAction
 	 */
 	public void sweepNextPoint() {
-
-		System.out.println(this.highestAdd);
-		System.out.println(this.highestSplit);
-		
 		Vertex topDomainVertex = null;
 		
 		topDomainVertex = this.status.getHighestVertex();
@@ -225,16 +214,36 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 	private void sweepProcessAdd() {
 		this.yLine = this.highestAdd.getY();
 		
-		this.status.add(highestAdd, this.highestAddInMain);
-		//TODO: feedback
+		if (this.status.add(this.highestAdd, this.highestAddInMain)) {
+			// Split was in visible area, add it to the main stack
+			if (!this.highestAddInMain) {
+				this.mainForm.addStartVertex(this.highestAdd);
+			}
+		} else {
+			// Addition was in an invisible area, remove it
+			if (this.highestAddInMain) {
+				this.mainForm.removeStartVertex(this.highestAdd);
+			}
+		}
 		
 		this.storeHighestAdd();
 	}
 	
 	private void sweepProcessSplit() {
 		this.yLine = this.highestSplit.getY();
-		this.status.split(this.highestSplit, this.highestSplitInMain);
-		//TODO: feedback
+		
+		if (this.status.split(this.highestSplit, this.highestSplitInMain)) {
+			// Split was in visible area, add it to the main stack
+			if (!this.highestSplitInMain) {
+				this.mainForm.addSplitVertex(this.highestSplit);
+			}
+		} else {
+			// Addition was in an invisible area, remove it
+			if (this.highestSplitInMain) {
+				this.mainForm.removeSplitVertex(this.highestSplit);
+			}
+		}
+
 		this.storeHighestSplit();
 	}
 	
@@ -264,6 +273,43 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 	}
 	
 	public void CompleteShape() {
+		// This is pure for visualisation and is not optimised yet
+		// Current duration O(kn^2) with k= the number of unique outlines
+		this.Shape = new ArrayList<VertexSegment>();
+		
+		this.addMAIN = this.mainForm.getStartVertices();
+		this.splitMAIN = this.mainForm.getSplitVertices();
+		Vertex currVertex = null;
+		
+		// Loop over all known start vertices
+		for (Vertex vertex : this.addMAIN) {
+			currVertex = vertex;
+			// Loop over the entire figure, make all segments, remove any vertices from the lists encountered
+			do {
+				this.Shape.add(new VertexSegment(currVertex, currVertex.getNext()));
+				currVertex = currVertex.getNext();
+				this.splitMAIN.remove(currVertex);
+				if (currVertex != vertex) {
+					this.addMAIN.remove(currVertex);
+				}
+				
+			} while (currVertex != vertex);
+		}
+		
+		// Loop over all split vertices
+		for (Vertex vertex : this.splitMAIN) {
+			currVertex = vertex;
+			// Loop over the entire figure, make all segments, remove any vertices from the lists encountered
+			do {
+				this.Shape.add(new VertexSegment(currVertex, currVertex.getNext()));
+				currVertex = currVertex.getNext();
+				this.addMAIN.remove(currVertex);
+				if (currVertex != vertex) {
+					this.splitMAIN.remove(currVertex);
+				}
+				
+			} while (currVertex != vertex);
+		}
 		
 	}
 }

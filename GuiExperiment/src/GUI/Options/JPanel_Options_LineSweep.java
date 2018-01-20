@@ -49,19 +49,22 @@ public class JPanel_Options_LineSweep  extends JPanel_Options{
 		});
 	
 		// Print button
-		JButton button_Final= new JButton("Show Final Result");
-		this.add(button_Final);
-		button_Final.setEnabled(false);
-		button_Final.addActionListener(new ActionListener() {
+		JButton button_FinalCompute= new JButton("Compute Final Result");
+		this.add(button_FinalCompute);
+		button_FinalCompute.setEnabled(false);
+		button_FinalCompute.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 					Sweeper.visualizeShape = !Sweeper.visualizeShape;
+					if (Sweeper.Shape == null) {
+						Sweeper.CompleteShape();
+					}
 					Sweeper.onUpdate();
 			    }          
 		});
 		
 		Sweeper.addListener(new UpdateEvent() {
 			public void onUpdate() {
-				button_Final.setEnabled(Sweeper.shapeComplete);
+				button_FinalCompute.setEnabled(Sweeper.shapeComplete);
 			}
 		});
 		

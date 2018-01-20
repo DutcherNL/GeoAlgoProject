@@ -16,7 +16,6 @@ public class TreeNode_SweepRight extends TreeNode_Sweep{
 	protected void update() {
 		TreeNode_Sweep mergeNode = this.getNextNode(this.type);
 		if (mergeNode != null && mergeNode.segment.getLowestValue() == this.segment.getLowestValue()) {
-			System.out.println("Right CC");
 			// A merge occurs
 			this.checkIntersectLeft(this.segment.startPoint.y);
 			mergeNode.checkIntersectLeft(this.segment.startPoint.y);
@@ -31,7 +30,6 @@ public class TreeNode_SweepRight extends TreeNode_Sweep{
 			mergeNode.parentNode.calcNodeVariables();
 			
 		} else {
-			System.out.println("Right DD");
 			this.checkIntersectLeft(this.segment.startPoint.y);
 			this.segment = new VertexSegment(this.segment.startPoint.getPrevious(), this.segment.startPoint);
 			this.calcNodeVariables();

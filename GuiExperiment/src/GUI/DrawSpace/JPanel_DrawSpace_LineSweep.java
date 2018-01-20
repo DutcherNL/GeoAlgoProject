@@ -17,9 +17,12 @@ import Space.PhaseControl.PhaseControl_LineSweep;
 public class JPanel_DrawSpace_LineSweep extends JPanel_DrawSpace{
 	
 	public final static Color POINT_COLOR_START = new Color(120, 53, 53);
+	public final static Color POINT_COLOR_START_ALT = new Color(120, 53, 53, 100);
 	public final static Color POINT_COLOR_INTERSECT = new Color(0, 200, 100);
 	public final static Color POINT_COLOR_SPLIT = new Color(120, 53, 120);
+	public final static Color POINT_COLOR_SPLIT_ALT = new Color(120,53,120, 100);
 	public final static Color POINT_COLOR_DOMAIN = new Color(53, 120, 53);
+	public final static Color COLOR_RESULT = new Color(0, 200, 200);
 	public final static Color EDGE_COLOR = new Color(53, 53, 53);
 	public final static Color YLINE_COLOR = new Color(53, 53, 53);
 	public final static Color BACKGROUND_COLOR = new Color(151, 151, 151);
@@ -44,7 +47,7 @@ public class JPanel_DrawSpace_LineSweep extends JPanel_DrawSpace{
 		g.fillRect(0, 0, size.width, size.height);
 		
 		if (this.roomSweeper.visualizeShape) {
-			
+			this.displayResult(g);
 		} else {
 			this.displayProgress(g);
 		}
@@ -52,7 +55,7 @@ public class JPanel_DrawSpace_LineSweep extends JPanel_DrawSpace{
 	}
 	
 	private void displayResult(Graphics g) {
-		
+		this.drawLines(g, COLOR_RESULT, this.roomSweeper.Shape);
 	}
 
 	private void displayProgress(Graphics g) {
@@ -107,11 +110,9 @@ public class JPanel_DrawSpace_LineSweep extends JPanel_DrawSpace{
 				(int)((roomSweeper.yLine - start_y) * zoomFactor_y + edgeCorrection)
 				);
 		
-		if (this.roomSweeper.mainForm != null) {
-			this.drawVertices(g, this.roomSweeper.mainForm.getStartVertices(), POINT_COLOR_START);
-			this.drawVertices(g, this.roomSweeper.sideForm.getStartVertices(), POINT_COLOR_START);
-			this.drawVertices(g, this.roomSweeper.mainForm.getSplitVertices(), POINT_COLOR_SPLIT);
-			this.drawVertices(g, this.roomSweeper.sideForm.getSplitVertices(), POINT_COLOR_SPLIT);
+		if (this.roomSweeper.sideForm != null) {
+			this.drawVertices(g, this.roomSweeper.sideForm.getStartVertices(), POINT_COLOR_START_ALT);
+			this.drawVertices(g, this.roomSweeper.sideForm.getSplitVertices(), POINT_COLOR_SPLIT_ALT);
 		}
 		
 		g.setColor(POINT_COLOR_INTERSECT);
@@ -132,7 +133,10 @@ public class JPanel_DrawSpace_LineSweep extends JPanel_DrawSpace{
 						);
 			}
 		}
-			//this.drawPoints(g, this.roomSweeper.intersections, POINT_COLOR_INTERSECT);
-		
+
+		if (this.roomSweeper.mainForm != null) {
+			this.drawVertices(g, this.roomSweeper.mainForm.getStartVertices(), POINT_COLOR_START);
+			this.drawVertices(g, this.roomSweeper.mainForm.getSplitVertices(), POINT_COLOR_SPLIT);
+		}
 	}
 }

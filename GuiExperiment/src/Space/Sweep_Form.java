@@ -4,17 +4,15 @@ import java.util.List;
 import java.util.Stack;
 
 import Space.PhaseControl.TreeNode_Vertex;
+import Space.PhaseControl.TreeNode_VertexRoot;
 
 public class Sweep_Form {
 	public boolean isMain;
 	
 	private Vertex sourceVertex;
 	
-	private TreeNode_Vertex startNodes;
-	private TreeNode_Vertex splitNodes;
-	
-	private int startCounter;
-	private int splitCounter;
+	private TreeNode_VertexRoot startNodes;
+	private TreeNode_VertexRoot splitNodes;
 	
 	public Sweep_Form (Vertex vertex, boolean IsMain) {
 		this.sourceVertex = vertex;
@@ -27,10 +25,12 @@ public class Sweep_Form {
 	 * Put all startpoints in a tree
 	 */
 	public void computePointTypes() {
-		startNodes = new TreeNode_Vertex(null);
-		splitNodes = new TreeNode_Vertex(null);
+		startNodes = new TreeNode_VertexRoot();
+		splitNodes = new TreeNode_VertexRoot();
 		
 		Vertex currentVertex = this.sourceVertex;
+		if (this.sourceVertex == null)
+			return;
 		
 		do {
 			PointType pointType = Utilities.computePointType(currentVertex);
@@ -44,24 +44,21 @@ public class Sweep_Form {
 			
 		} while (currentVertex != this.sourceVertex);
 	}
-
-	public void reset() {
-		this.startCounter = 0;
-		this.splitCounter = 0;
-	}
 	
 	public void addStartVertex(Vertex v) {
-		//TODO: insert code
+		startNodes.add(v);
 	}
 	public void addSplitVertex(Vertex v) {
-		
+		splitNodes.add(v);
 	}
 	
-	public void removeStartVertex() {
-		
+	public void removeStartVertex(Vertex v) {
+		System.out.println("Remove STart ordered");
+		this.startNodes.remove(v);
 	}
-	public void removeSplitVertex() {
-		
+	public void removeSplitVertex(Vertex v) {
+		System.out.println("Remove Split ordered");
+		this.splitNodes.remove(v);
 	}
 
 	public List<Vertex> getStartVertices(){
@@ -69,14 +66,5 @@ public class Sweep_Form {
 	}
 	public List<Vertex> getSplitVertices(){
 		return splitNodes.getVertices();
-	}
-	
-	public Vertex getNextStartVertex() {
-		this.startCounter++;
-		return this.startNodes.get(this.startCounter - 1);
-	}
-	public Vertex getNextSplitVertex() {
-		this.splitCounter++;
-		return this.splitNodes.get(this.splitCounter - 1);
 	}
 }
