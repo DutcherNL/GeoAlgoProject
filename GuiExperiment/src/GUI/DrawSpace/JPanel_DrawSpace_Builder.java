@@ -40,24 +40,46 @@ public class JPanel_DrawSpace_Builder extends JPanel_DrawSpace{
 		g.setColor(BACKGROUND_COLOR);
 		g.fillRect(0, 0, size.width, size.height);
 
+
+		g.setColor(Color.LIGHT_GRAY);
+		for (int i = 0; i < size.width; i += 10) {
+			g.drawLine(i, 0, i, size.height);
+
+			if (i % 50 == 0) {
+				g.drawLine(i + 1, 0, i + 1, size.height);
+			}
+		}
+
+		for (int i = 0; i < size.height; i += 10) {
+			g.drawLine(0,  i, size.width, i);
+
+			if (i % 50 == 0) {
+				g.drawLine(0, i + 1, size.width, i + 1);
+			}
+		}
+
 		for (List<Vertex> region : lights.getVisibilityRegions()) {
 			this.drawPolygon(g, region, Lights.REGION_COLOR);
 		}
-		
+
 		// Draw the lines, draw last line different if it can't close
-		if (this.roomBuilder.canClose())
+		if (this.roomBuilder.canClose()) {
 			this.drawLines(g, roomPoints, WORKEDGE_COLOR);
-		else
+		}
+		else {
 			this.drawLines(g, roomPoints, WORKEDGE_COLOR, EDGE_ERROR_COLOR);
-		
+		}
+
 		// Draw all points of the current figure
 		this.drawVertices(g, roomPoints, POINT_COLOR);
-		
+
+		this.drawPoints(g, lights.getTemp(), Color.MAGENTA);
+
 		// Draw all other fragment areas
 		for(RoomFragment fragment : roomBuilder.room.getFragments()) {
 			this.drawLines(g, fragment.getVertices(), EDGE_COLOR);
 		}
-		
+
 		this.drawPoints(g, lights.getLights(), Lights.POINT_COLOR);
 		
 		g.setColor(Color.CYAN);		

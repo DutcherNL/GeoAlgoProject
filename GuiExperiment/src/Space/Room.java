@@ -98,4 +98,9 @@ public class Room {
 	public List<Vertex> getVertices() {
 		return getFragments().get(0).getVertices();
 	}
+
+	public void setVertices(List<Vertex> vertices) {
+    	clear();
+    	addFragment(new RoomFragment(vertices));
+	}
 }

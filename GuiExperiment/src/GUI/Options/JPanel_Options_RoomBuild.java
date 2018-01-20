@@ -1,5 +1,6 @@
 package GUI.Options;
 
+import GUI.Screen;
 import Space.Lights;
 import Space.PhaseControl.PhaseControl_Builder;
 import Space.UpdateEvent;
@@ -8,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 /**
  * Contains the option buttons for the program
@@ -17,7 +19,7 @@ import java.awt.event.ActionListener;
 public class JPanel_Options_RoomBuild extends JPanel_Options{
 	
 	
-	public JPanel_Options_RoomBuild(PhaseControl_Builder Builder, Lights lights) {
+	public JPanel_Options_RoomBuild(Screen screen, PhaseControl_Builder Builder, Lights lights) {
 		super(Builder.room);
 
 		LayoutManager experimentLayout = new GridLayout(6,1);
@@ -51,10 +53,10 @@ public class JPanel_Options_RoomBuild extends JPanel_Options{
 	         }          
 	    });
 		
-		// Load button
-		JButton button_Load = new JButton("Load external");
-		this.add(button_Load);
-		button_Load.setEnabled(false);
+//		// Load button
+//		JButton button_Load = new JButton("Load external");
+//		this.add(button_Load);
+//		button_Load.setEnabled(false);
 		
 		// Compute shape button
 		JButton button_Shape = new JButton("Finish shape");
@@ -71,6 +73,34 @@ public class JPanel_Options_RoomBuild extends JPanel_Options{
 		button_Visibility.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				lights.calculateVisibilityRegions();
+			}
+	    });
+
+		// Compute visibility regions button
+		JButton button_Save = new JButton("S4V3");
+		this.add(button_Save);
+		button_Save.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					screen.saveState();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+	    });
+
+		// Compute visibility regions button
+		JButton button_Load = new JButton("L04D");
+		this.add(button_Load);
+		button_Load.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					screen.loadState();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				} catch (ClassNotFoundException e1) {
+					e1.printStackTrace();
+				}
 			}
 	    });
 		

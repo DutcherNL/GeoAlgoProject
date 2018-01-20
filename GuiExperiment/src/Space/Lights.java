@@ -14,6 +14,8 @@ public class Lights {
     private List<List<Vertex>> visibilityRegions = new ArrayList<>();
     private Room room;
 
+    private List<Point2D> temp = new ArrayList<>();
+
     private List<UpdateEvent> listeners = new ArrayList<>();
 
     public Lights(Room room) {
@@ -24,59 +26,139 @@ public class Lights {
         visibilityRegions.clear();
 
         for (Point2D light : lights) {
-            System.out.println(calculateVisibilityRegion(light));
+            visibilityRegions.add(calculateVisibilityRegion(light));
         }
-
-        // TODO: visibilityRegions.add(new ArrayList<>(room.getVertices()));
 
         this.onUpdate();
     }
 
     private List<Vertex> calculateVisibilityRegion(Point2D light) {
         LinkedList<Vertex> visiblePoints = new LinkedList<>();
-        Iterator<Vertex> roomPoints = room.getVertices().iterator();
 
-        visiblePoints.push(roomPoints.next());
+        visiblePoints.push(new Vertex(room.getVertices().get(0)));
 
-        while (roomPoints.hasNext()) {
-            Vertex current = roomPoints.next();
-            Vertex previous = visiblePoints.peek();
+        boolean previousCutOff = false;
+        int i = 1;
+        boolean fullIteration = false;
+        boolean CW = false;
 
-            isVisibleWRT(current, previous, light);
-            visiblePoints.push(current);
+        while (!fullIteration) {
+            fullIteration = visiblePoints.getLast().equals(room.getVertices().get(i)) || (visiblePoints.size() >= 2 && visiblePoints.get(visiblePoints.size() - 2).equals(room.getVertices().get(i))) || (visiblePoints.size() >= 3 && visiblePoints.get(visiblePoints.size() - 3).equals(room.getVertices().get(i)));
 
-            /*if (isVisibleWRT(current, previous, light)) {
-                while (isVisibleWRT(previous, current, light)) {
+            boolean nextCutOff = false;
+            Vertex current = new Vertex(room.getVertices().get(i));
+            Vertex previous = new Vertex(visiblePoints.peek());
+
+            if (isVisibleWRT(current, previous, light, CW)) {
+                while (visiblePoints.size() >= 1 && isCCWWRT(previous, current, light)) {
                     visiblePoints.pop();
+                    nextCutOff = true;
                     previous = visiblePoints.peek();
                 }
+                CW = false;
+            } else {
+                if (fullIteration) {
+                    visiblePoints.removeLast();
+                    fullIteration = false;
+                }
+                previousCutOff = true;
+                CW = true;
             }
 
-            if (isVisibleWRT(current, previous, light)) {
+            if (previous != null) {
+                if (isVisibleWRT(current, previous, light, CW)) {
+                    if (previousCutOff) {
+                        visiblePoints.push(createPreviousInnerVertex(previous, current, light));
+                    }
+                    if (nextCutOff) {
+                        visiblePoints.push(createNextInnerVertex(current, previous, light));
+                    }
+                    if (!fullIteration) {
+                        visiblePoints.push(current);
+                    }
+                    previousCutOff = false;
+                }
+            } else {
                 visiblePoints.push(current);
-            }*/
+                previousCutOff = false;
+            }
+
+            if (i < room.getVertices().size() - 1) {
+                i++;
+            } else {
+                i = 0;
+            }
         }
 
-        return visiblePoints;
+        return createPolygon(visiblePoints);
     }
 
-    private boolean isVisibleWRT(Vertex a, Vertex b, Point2D p) {
+    private boolean isVisibleWRT(Vertex a, Vertex b, Point2D p, boolean CW) {
         double angle = Utilities.computeAngle(b, p, a);
 
         if (angle < Math.PI) {
             return true;
-        } else {
+        } else if (!CW){
             double edgeAngle = Utilities.computeAngle(p, b, b.getPrevious());
             double newAngle = Utilities.computeAngle(p, b, a);
 
-            System.out.println(edgeAngle + " vs " + newAngle);
-//
-//            if () {
-//
-//            }
+            if (edgeAngle > newAngle) {
+                return true;
+            }
         }
 
-        return new Random().nextBoolean();
+        return false;
+    }
+
+    private boolean isCCWWRT(Vertex a, Vertex b, Point2D p) {
+        return Utilities.computeAngle(b, p, a) < Math.PI;
+    }
+
+    private Vertex createNextInnerVertex(Vertex current, Vertex previous, Point2D light) {
+        Line line = new Line(current, new Vertex(light));
+        Segment segment = new Segment(previous, previous.getNext());
+
+        Vertex intersection = line.intersect(segment);
+
+        intersection.setPrevious(segment.getStartVertex());
+        segment.getEndVertex().setPrevious(intersection);
+
+        return intersection;
+    }
+
+    private Vertex createPreviousInnerVertex(Vertex current, Vertex previous, Point2D light) {
+        Line line = new Line(current, new Vertex(light));
+        Segment segment = new Segment(previous.getPrevious(), previous);
+
+        Vertex intersection = line.intersect(segment);
+
+        intersection.setPrevious(segment.getStartVertex());
+        segment.getEndVertex().setPrevious(intersection);
+
+        return intersection;
+    }
+
+    private List<Vertex> createPolygon(List<Vertex> vertices) {
+        List<Vertex> polygon = new ArrayList<>();
+
+        Iterator<Vertex> iterator = vertices.iterator();
+
+        Vertex current = iterator.next();
+        Vertex previous;
+        polygon.add(new Vertex(current.x, current.y, true));
+
+        while (iterator.hasNext()) {
+            previous = current;
+            current = iterator.next();
+
+            polygon.add(new Vertex(current.x, current.y, previous));
+        }
+
+        return polygon;
+    }
+
+    public List<Point2D> getTemp() {
+        return temp;
     }
 
     public void addLight(Point2D light) {
@@ -88,6 +170,8 @@ public class Lights {
     public List<Point2D> getLights() {
         return lights;
     }
+
+    public void setLights(List<Point2D> lights) { this.lights = lights; }
 
     public void clear() {
         lights.clear();
