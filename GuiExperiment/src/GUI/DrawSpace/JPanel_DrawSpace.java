@@ -84,7 +84,14 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 	protected void drawLines(Graphics g, List<Vertex> points, Color color, Color connectColor) {
 		g.setColor(color);
 
-		for(int i=0; i + 1<points.size();i++) {
+		if (points.size() > 0) {
+			g.drawString(0 + "(" + ((int) points.get(0).x) + "," + ((int) points.get(0).y) + ")",
+					(int)((points.get(0).x - start_x) * zoomFactor_x + edgeCorrection),
+					(int)((points.get(0).y - start_y) * zoomFactor_y + edgeCorrection) - 5
+			);
+		}
+
+		for(int i=0; i + 1 < points.size();i++) {
 			g.drawLine(
 					(int)((points.get(i).x - start_x) * zoomFactor_x + edgeCorrection),
 					(int)((points.get(i).y - start_y) * zoomFactor_y + edgeCorrection),
@@ -92,9 +99,9 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 					(int)((points.get(i+1).y - start_y) * zoomFactor_y + edgeCorrection)
 					);
 
-			g.drawString("(" + ((int) points.get(i).x) + "," + ((int) points.get(i).y) + ")",
-					(int)((points.get(i).x - start_x) * zoomFactor_x + edgeCorrection),
-					(int)((points.get(i).y - start_y) * zoomFactor_y + edgeCorrection) - 5
+			g.drawString(i+1 + "(" + ((int) points.get(i+1).x) + "," + ((int) points.get(i+1).y) + ")",
+					(int)((points.get(i+1).x - start_x) * zoomFactor_x + edgeCorrection),
+					(int)((points.get(i+1).y - start_y) * zoomFactor_y + edgeCorrection) - 5
 			);
 		}
 		g.setColor(connectColor);

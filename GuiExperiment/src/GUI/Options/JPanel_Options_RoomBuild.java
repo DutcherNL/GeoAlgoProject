@@ -52,7 +52,16 @@ public class JPanel_Options_RoomBuild extends JPanel_Options{
 				Builder.removeLastVertex();
 	         }          
 	    });
-		
+
+		// removeLights button
+		JButton button_RemoveLights = new JButton("Remove lights");
+		this.add(button_RemoveLights);
+		button_RemoveLights.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				screen.removeLights();
+	         }
+	    });
+
 //		// Load button
 //		JButton button_Load = new JButton("Load external");
 //		this.add(button_Load);
