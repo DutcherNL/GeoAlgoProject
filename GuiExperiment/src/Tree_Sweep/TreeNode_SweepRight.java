@@ -1,6 +1,7 @@
 package Tree_Sweep;
 
 import Space.LineIntersect;
+import Space.Utilities;
 import Space.Vertex;
 import Space.VertexSegment;
 
@@ -14,10 +15,11 @@ public class TreeNode_SweepRight extends TreeNode_Sweep{
 	
 	@Override
 	protected void update() {
-		TreeNode_Sweep mergeNode = this.getNextNode(this.type);
-			// TODO: This can also be done by checking whether this startpoint.getprevious has a higher y-coordinate. 
-		if (mergeNode != null && mergeNode.segment.getLowestValue() == this.segment.getLowestValue()) {
+		
+		if (Utilities.isBelow(this.segment.startPoint, this.segment.startPoint.getPrevious())) {
 			// A merge occurs
+			TreeNode_Sweep mergeNode = this.getNextNode(this.type);
+			
 			this.checkIntersectLeft(this.segment.startPoint.y);
 			mergeNode.checkIntersectLeft(this.segment.startPoint.y);
 			

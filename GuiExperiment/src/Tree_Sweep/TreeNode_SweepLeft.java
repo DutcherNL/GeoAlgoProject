@@ -15,7 +15,7 @@ public class TreeNode_SweepLeft extends TreeNode_Sweep{
 		if (this.segment.endPoint == this.opposite.segment.startPoint) {
 				// End of the domain is reached
 				this.checkIntersectLeft(this.segment.endPoint.y);
-				this.opposite.checkIntersectLeft(this.segment.endPoint.y);
+				this.opposite.moveLeftOf(this, Tree_Sweep_Type.ALL);
 				this.opposite.remove();
 				this.remove();
 				this.parentNode.calcNodeVariables();

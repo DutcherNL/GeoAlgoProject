@@ -298,6 +298,7 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 	 */
 	private void sweepProcessAdd() {
 		this.yLine = this.highestAdd.getY();
+		System.out.println("Add" + this.highestAdd +"\n" + Utilities.computePointType(this.highestAdd));
 		
 		if (this.status.add(this.highestAdd, this.highestAddInMain)) {
 			// Split was in visible area, add it to the main stack

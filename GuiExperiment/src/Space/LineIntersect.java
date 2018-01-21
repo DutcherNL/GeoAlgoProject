@@ -144,7 +144,7 @@ public class LineIntersect {
 		
 		double x = (b[1] - a[1]) / (a[0] - b[0]);
 		
-		if (a[0] == b[0]) { // The angles are the same
+		if (Math.abs(a[0] - b[0]) < 0.001) { // The angles are the same
 			return getIntersectionFromParallel(A, B);
 		} else {
 			return new PointDouble(x, a[1] + a[0] * x);
@@ -160,6 +160,12 @@ public class LineIntersect {
 	    return result;
 	}
 	
+	/**
+	 * Assumes two lines as parallel and returns the lowest point of the vertex with the highest lowest point.
+	 * @param A
+	 * @param B
+	 * @return
+	 */
 	private static Point2D getIntersectionFromParallel(LineSegment A, LineSegment B)
 	{
 		// Assume two lines are parallel at this point, return the highest end point (relative) of the two lines
