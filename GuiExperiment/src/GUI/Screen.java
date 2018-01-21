@@ -212,7 +212,7 @@ public class Screen {
 		RemoveGeneral();
 
 
-		phaseController = new PhaseControl_LineSweep(room);
+		phaseController = new PhaseControl_LineSweep(room, lights);
 		this.phaseName.setText("Prepare Room");
 		this.drawSpace = new JPanel_DrawSpace_LineSweep((PhaseControl_LineSweep)phaseController);
 		SVG svg = new SVG(drawSpace);

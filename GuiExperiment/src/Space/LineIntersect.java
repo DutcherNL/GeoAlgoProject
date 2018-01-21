@@ -111,11 +111,25 @@ public class LineIntersect {
 	
 	private static Point2D checkVerticalIntersect(LineSegment A, LineSegment B) {
 		if (A.startPoint.getX() == A.endPoint.getX()) {
+			// Line A is a vertical line
+			
+			if (B.startPoint.getX() == B.endPoint.getX()) {
+				// B is also vertical
+				if (A.startPoint.getX() == B.startPoint.getX()) {
+					// both lines are at the same x-coordinate
+					return getIntersectionFromParallel(A, B);
+				} else {
+					System.out.println("Intersection run down on two non-touching vertical lines. Something went wrong in the code");
+					return null;
+				}
+			}
+				// A is vertical, B is not.
 			double fraction = (A.startPoint.getX() - B.endPoint.getX()) / (B.startPoint.getX() - B.endPoint.getX());
 			return new PointDouble(
 					B.endPoint.getX() + (B.startPoint.getX() - B.endPoint.getX()) * fraction,
 					B.endPoint.getY() + (B.startPoint.getY() - B.endPoint.getY()) * fraction);
 		} else if (B.startPoint.getX() == B.endPoint.getX()) {
+				// B is vertical, A is not
 			double fraction = (B.startPoint.getX() - A.endPoint.getX()) / (A.startPoint.getX() - A.endPoint.getX());
 			return new PointDouble(
 					A.endPoint.getX() + (A.startPoint.getX() - A.endPoint.getX()) * fraction,
@@ -130,7 +144,11 @@ public class LineIntersect {
 		
 		double x = (b[1] - a[1]) / (a[0] - b[0]);
 		
-		return new PointDouble(x, a[1] + a[0] * x);
+		if (a[0] == b[0]) { // The angles are the same
+			return getIntersectionFromParallel(A, B);
+		} else {
+			return new PointDouble(x, a[1] + a[0] * x);
+		}
 	}
 	
 
@@ -140,5 +158,14 @@ public class LineIntersect {
 				
 	    double[] result =  {a, b};
 	    return result;
+	}
+	
+	private static Point2D getIntersectionFromParallel(LineSegment A, LineSegment B)
+	{
+		// Assume two lines are parallel at this point, return the highest end point (relative) of the two lines
+		Point2D Alow = Utilities.isBelow(A.startPoint, A.endPoint) ? A.startPoint : A.endPoint;
+		Point2D Blow = Utilities.isBelow(B.startPoint, B.endPoint) ? B.startPoint : B.endPoint;
+		return Utilities.isBelow(Alow, Blow) ? Blow : Alow;
+		
 	}
 }

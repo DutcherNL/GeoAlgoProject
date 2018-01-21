@@ -24,7 +24,8 @@ public class JPanel_DrawSpace_LineSweep extends JPanel_DrawSpace{
 	public final static Color POINT_COLOR_SPLIT_ALT = new Color(120,53,120, 100);
 	public final static Color POINT_COLOR_DOMAIN = new Color(53, 120, 53);
 	public final static Color COLOR_RESULT = new Color(0, 200, 200);
-	public final static Color EDGE_COLOR = new Color(53, 53, 53);
+	public final static Color EDGE_COLOR_ROOM = new Color(53, 53, 53);
+	public final static Color EDGE_COLOR_LIGHTS = new Color(90, 90, 47);
 	public final static Color YLINE_COLOR = new Color(53, 53, 53);
 	public final static Color EDGE_ERROR_COLOR = Color.RED;
 	
@@ -97,9 +98,16 @@ public class JPanel_DrawSpace_LineSweep extends JPanel_DrawSpace{
 			}			
 		}
 		
-		// Draw all other fragment areas
-		for(RoomFragment fragment : roomSweeper.room.getFragments()) {
-			this.drawLines(g, fragment.getVertices(), EDGE_COLOR);
+		if (roomSweeper.useRoomFragments || roomSweeper.mainForm == null) {
+			// Draw all other fragment areas
+			for(RoomFragment fragment : roomSweeper.room.getFragments()) {
+				this.drawLines(g, fragment.getVertices(), EDGE_COLOR_ROOM);
+			}
+		}
+		if (!roomSweeper.useRoomFragments || roomSweeper.mainForm == null) {
+			for(List<Vertex> visibleRegion : roomSweeper.lights.getVisibilityRegions()) {
+				this.drawLines(g, visibleRegion, EDGE_COLOR_ROOM);
+			}
 		}
 		
 		g.setColor(YLINE_COLOR);

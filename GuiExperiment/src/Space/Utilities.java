@@ -61,24 +61,24 @@ public class Utilities {
 		);
 	}
 
-    public static double computeInternalAngle(Vertex Source) {
-    	double result = computeAngle(Source.getPrevious(), Source, Source.getNext());
+	public static double computeInternalAngle(Vertex Source) {
+    	double result = computeAngle(Source.getNext(), Source, Source.getPrevious());
     	//System.out.println((result / (2*Math.PI) * 360) + " rad");
     	return result;
     }
 
     /**
 	 * Compute if A is below B
-	 * @param A
-	 * @param B
+	 * @param startPoint
+	 * @param endPoint
 	 * @return
 	 */
-	public static boolean isBelow(PointDouble A, PointDouble B) {
-		if (A == null) return true;
-		if (B == null) return false;
+	public static boolean isBelow(Point2D startPoint, Point2D endPoint) {
+		if (startPoint == null) return true;
+		if (endPoint == null) return false;
 
-		if (A.y < B.y) return true;
-		if (A.y == B.y && A.x > B.x) return true;
+		if (startPoint.getY() < endPoint.getY()) return true;
+		if (startPoint.getY() == endPoint.getY() && startPoint.getX() > endPoint.getX()) return true;
 		return false;
 	}
 

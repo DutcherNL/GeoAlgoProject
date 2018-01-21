@@ -16,8 +16,33 @@ public class JPanel_Options_LineSweep  extends JPanel_Options{
 	public JPanel_Options_LineSweep(PhaseControl_LineSweep Sweeper, SVG svg) {
 		super(Sweeper.room);
 
-		LayoutManager experimentLayout = new GridLayout(6,1);
+		LayoutManager experimentLayout = new GridLayout(14,1);
 		this.setLayout(experimentLayout);
+		
+		this.add(new JLabel(""));
+		this.add(new JLabel("Choose source material"));
+		
+		// Startpoitns button
+		JButton button_RoomSweep= new JButton("Use Room Fragments");
+		this.add(button_RoomSweep);
+		button_RoomSweep.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+					Sweeper.ReadyFirstRun(true);
+			    };
+		});
+		
+		// Startpoitns button
+		JButton button_LightSweep= new JButton("Use Visibility Regions");
+		this.add(button_LightSweep);
+		button_LightSweep.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+					Sweeper.ReadyFirstRun(false);
+			    };
+		});
+
+		
+		this.add(new JLabel(""));
+		this.add(new JLabel("Sweep related effects"));
 		
 		// Startpoitns button
 		JButton button_FullSweep= new JButton("Run full sweep");
@@ -47,6 +72,9 @@ public class JPanel_Options_LineSweep  extends JPanel_Options{
 			    }          
 		});
 	
+		this.add(new JLabel(""));
+		this.add(new JLabel("Final result buttons"));
+		
 		// Print button
 		JButton button_FinalCompute= new JButton("Compute Final Result");
 		this.add(button_FinalCompute);
@@ -97,12 +125,18 @@ public class JPanel_Options_LineSweep  extends JPanel_Options{
 		
 		Sweeper.addListener(new UpdateEvent() {
 			public void onUpdate() {
-				button_FinalCompute.setEnabled(Sweeper.shapeComplete);
-				button_FullSweep.setEnabled(!Sweeper.shapeComplete);
-				button_SingleSweep.setEnabled(!Sweeper.shapeComplete);
+				button_FinalCompute.setEnabled(Sweeper.shapeComplete && Sweeper.mainForm != null);
+				button_FullSweep.setEnabled(!Sweeper.shapeComplete && Sweeper.mainForm != null);
+				button_SingleSweep.setEnabled(!Sweeper.shapeComplete && Sweeper.mainForm != null);
 				button_StoreShell.setEnabled(Sweeper.Shape != null);
+				button_Export.setEnabled(Sweeper.Shape != null);
+				
+				button_LightSweep.setEnabled(Sweeper.mainForm == null);
+				button_RoomSweep.setEnabled(Sweeper.mainForm == null);
 			}
 		});
+		
+		Sweeper.onUpdate();
 		
 			
 	

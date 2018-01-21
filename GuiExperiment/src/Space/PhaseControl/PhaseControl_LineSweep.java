@@ -4,6 +4,7 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import Space.Lights;
 import Space.PointType;
 import Space.Room;
 import Tree_Sweep.TreeNode_SweepRoot;
@@ -15,6 +16,7 @@ import Space.VertexSegment;
 public class PhaseControl_LineSweep  extends PhaseControl{
 
 	public Room room;
+	public Lights lights;
 	public double yLine = 0;
 	protected int shapeCounter = 1;
 	public boolean shapeComplete = false;
@@ -24,6 +26,7 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 	public TreeNode_SweepRoot status;
 	
 	public List<Vertex> intersections;
+	public boolean useRoomFragments = false;
 	
 	public Sweep_Form mainForm;
 	public Sweep_Form sideForm;
@@ -38,12 +41,26 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 	private boolean highestSplitInMain = false;
 	
 	
-	public PhaseControl_LineSweep(Room Room) {
+	public PhaseControl_LineSweep(Room Room, Lights lights) {
 		super();
 		this.room = Room;
-		this.mainForm = new Sweep_Form(this.room.getFragments().get(0).getVertices().get(0), true);
+		this.lights = lights;
 		
-		this.setUpNextSweep();		
+				
+	}
+	
+	public void ReadyFirstRun(boolean fromRoom) {
+		this.useRoomFragments = fromRoom;
+		
+		if (fromRoom) {
+			this.mainForm = new Sweep_Form(this.room.getFragments().get(0).getVertices().get(0), true);
+		} else {
+			// Use the lights
+			this.mainForm = new Sweep_Form(this.lights.getVisibilityRegions().get(0).get(0), true);
+		}
+		
+		this.setUpNextSweep();
+		this.onUpdate();
 	}
 	
 	@Override
@@ -53,14 +70,30 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 	}
 	
 	public void setUpNextSweep() {
-		if (this.room.getFragments().size() > this.shapeCounter) {
-			this.sideForm = new Sweep_Form(this.room.getFragments().get(this.shapeCounter).getVertices().get(0), true);
-			this.shapeCounter++;
+		if (this.useRoomFragments) {
+			// Use the room fragments as deliminator
+			if (this.room.getFragments().size() > this.shapeCounter) {
+				this.sideForm = new Sweep_Form(this.room.getFragments().get(this.shapeCounter).getVertices().get(0), true);
+				this.shapeCounter++;
+			} else {
+				this.sideForm = new Sweep_Form(null, true);
+				this.shapeComplete = true;
+				return;
+			}
 		} else {
-			this.sideForm = new Sweep_Form(null, true);
-			this.shapeComplete = true;
-			return;
+			// Use the room fragments as deliminator
+			if (this.lights.getVisibilityRegions().size() > this.shapeCounter) {
+				this.sideForm = new Sweep_Form(this.lights.getVisibilityRegions().get(this.shapeCounter).get(0), true);
+				this.shapeCounter++;
+			} else {
+				this.sideForm = new Sweep_Form(null, true);
+				this.shapeComplete = true;
+				return;
+			}
 		}
+		
+		
+		
 		
 		this.status = new TreeNode_SweepRoot(this);
 		this.intersections = new ArrayList<Vertex>();
@@ -144,14 +177,14 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 						Vertex startSide = this.splitJOIN.get(0);
 						
 						// Both have points, check order
-						if (Utilities.isBelow(startMain, startSide)) {
-							this.highestSplit = this.splitJOIN.get(0);
-							this.splitJOIN.remove(0);
-							this.highestSplitInMain = false;
-						} else {
+						if (Utilities.isBelow(startSide, startMain)) {
 							this.highestSplit = startMain;
 							this.splitMAIN.remove(0);
 							this.highestSplitInMain = true;
+						} else {
+							this.highestSplit = this.splitJOIN.get(0);
+							this.splitJOIN.remove(0);
+							this.highestSplitInMain = false;
 						}				
 					}
 				}

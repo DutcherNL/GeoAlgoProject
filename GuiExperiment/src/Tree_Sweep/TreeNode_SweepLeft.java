@@ -34,6 +34,9 @@ public class TreeNode_SweepLeft extends TreeNode_Sweep{
 						this.segment,
 						interSegment.segment));
 		
+		
+		
+		
 		if (interSegment.isLeft) {
 			if (this.isConflicted) {
 				// intersegment passes from left to right

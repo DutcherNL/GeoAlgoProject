@@ -37,8 +37,6 @@ public class TreeNode_SweepRight extends TreeNode_Sweep{
 	}
 	}
 
-
-
 	
 	@Override
 	protected void computeIntersection(TreeNode_Sweep interSegment) {
@@ -46,6 +44,19 @@ public class TreeNode_SweepRight extends TreeNode_Sweep{
 				LineIntersect.getIntersectionPoint(
 						this.segment,
 						interSegment.segment));
+		
+		// Shortcut for a cleaner solution in case there is a horizontal line intersection
+		if (intersection == this.segment.endPoint) {
+			if (this.isConflicted) {
+				// Go the normal route
+			} else {
+				interSegment.segment.startPoint.setNext(this.segment.endPoint);
+				interSegment.changeConflictedState();
+				this.changeConflictedState();
+				this.broadcastIntersection(intersection);
+				return;
+			}			
+		}
 		
 		if (interSegment.isLeft) {
 			if (this.isConflicted) {

@@ -45,7 +45,7 @@ public class VertexSegment extends LineSegment{
 		
 		// If the segment is itself horizontal,
 		if (vertexHigh.y == vertexLow.y) 
-			return vertexHigh;
+			return vertexLow;
 		
 		double relativeY = (y - vertexLow.y) / (vertexHigh.y - vertexLow.y);
 		double x = vertexLow.x + relativeY * (vertexHigh.x - vertexLow.x);

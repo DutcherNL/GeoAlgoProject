@@ -18,10 +18,7 @@ public class Vertex extends PointDouble {
 
     public Vertex(double x, double y, Vertex previous) {
         super(x, y);
-        if (previous != null) {
-        	this.previous = previous;
-        	previous.setNext(this);
-        }
+        this.setPrevious(previous);
     }
 
     public Vertex(double x, double y, boolean start) {
@@ -54,6 +51,8 @@ public class Vertex extends PointDouble {
     
     public void setNext(Vertex next) {
         this.next = next;
+        if (next != null)
+        	this.next.previous = this;
     }
 
     public boolean isStart() {

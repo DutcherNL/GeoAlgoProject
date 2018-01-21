@@ -757,7 +757,7 @@ public abstract class TreeNode_Sweep{
 	 */
 	protected boolean isLower(Vertex Vertex) {
 		double res = this.segment.getHorizontalIntersection(Vertex.getY()).getX();
-		return Vertex.getX() <= res;
+		return Vertex.getX() < res;
 	}
 
 	
