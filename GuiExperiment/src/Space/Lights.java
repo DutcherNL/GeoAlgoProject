@@ -1,6 +1,7 @@
 package Space;
 
 import Visibility.NullVisiblityAlgorithm;
+import Visibility.RayTracingVisibilityAlgorithm;
 import Visibility.StackVisibilityAlgorithm;
 import Visibility.VisibilityAlgorithm;
 import javafx.util.Pair;
@@ -41,7 +42,8 @@ public class Lights {
     private List<Vertex> calculateVisibilityRegion(Point2D light) {
 
 //        VisibilityAlgorithm algorithm = new StackVisibilityAlgorithm();
-        VisibilityAlgorithm algorithm = new NullVisiblityAlgorithm();
+        VisibilityAlgorithm algorithm = new RayTracingVisibilityAlgorithm();
+//        VisibilityAlgorithm algorithm = new NullVisiblityAlgorithm();
 
         // copy vertices into Point2D list
         List<Vertex> vertices = room.getVertices();

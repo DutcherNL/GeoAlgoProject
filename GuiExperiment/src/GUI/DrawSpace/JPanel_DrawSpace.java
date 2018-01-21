@@ -148,7 +148,6 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 
 		int[] xVertices = points.stream().map(p -> ((p.x - start_x) * zoomFactor_x + edgeCorrection)).mapToInt(Double::intValue).toArray();
 		int[] yVertices = points.stream().map(p -> ((p.y - start_y) * zoomFactor_y + edgeCorrection)).mapToInt(Double::intValue).toArray();
-
 		g.fillPolygon(xVertices, yVertices, points.size());
 	}
 	

@@ -73,41 +73,51 @@ public class RayTracingVisibilityAlgorithm implements VisibilityAlgorithm {
 
         Edge closestEdge = null;
 
-        while (events.size() > 0) {
-            Event event = events.remove(0);
+        for (int pass = 0; pass < 2; pass++) {
+            for (Event event : events) {
+                if (event instanceof EdgeStartEvent) {
+                    System.out.println("Start of " + event.edge);
+                    edgeHeap.add(event.edge);
+                    if (event.edge.equals(edgeHeap.peek())) {
+                        System.out.println("Start of new visible edge");
+                        // new edge is closest
+                        if (closestEdge != null && !closestEdge.end.equals(event.edge.start)) {
+                            output.add(closestEdge.getPoint(light, event.angle));
+                        }
 
-            if (event instanceof EdgeStartEvent) {
-                System.out.println("Start of " + event.edge);
-                edgeHeap.add(event.edge);
-                if (event.edge.equals(edgeHeap.peek())) {
-                    // new edge is closest
-                    if (closestEdge != null && !closestEdge.end.equals(event.edge.start)) {
-                        output.add(closestEdge.getPoint(light, event.angle));
+                        if (pass > 0 && output.get(0).equals(event.edge.start)) {
+                            break;
+                        }
+
+                        output.add(event.edge.start);
                     }
-                    output.add(event.edge.start);
-                }
-                closestEdge = edgeHeap.peek();
-            }
-
-            if (event instanceof EdgeEndEvent) {
-                if (!edgeHeap.remove(event.edge)) {
-                    // remove nonexistent edge? => add event back in since we apparently still need to find the start
-                    events.add(event);
-                    continue;
-                }
-
-                System.out.println("End of " + event.edge);
-                if (event.edge.equals(closestEdge)) {
-                    output.add(event.edge.end);
                     closestEdge = edgeHeap.peek();
-                    if (closestEdge != null) {
-                        output.add(closestEdge.getPoint(light, event.angle));
+                }
+
+                if (event instanceof EdgeEndEvent) {
+                    if (!edgeHeap.remove(event.edge)) {
+                        output.clear();
+                        // remove nonexistent edge? => we'll use it next pass
+                        continue;
+                    }
+
+                    System.out.println("End of " + event.edge);
+                    if (event.edge.equals(closestEdge)) {
+                        System.out.println("End of visible edge");
+
+                        if (pass > 0 && output.get(0).equals(event.edge.end)) {
+                            break;
+                        }
+
+                        output.add(event.edge.end);
+                        closestEdge = edgeHeap.peek();
+                        if (closestEdge != null && !closestEdge.start.equals(event.edge.end)) {
+                            output.add(closestEdge.getPoint(light, event.angle));
+                        }
                     }
                 }
             }
         }
-
-        output.remove(output.size() - 1); // remove duplicate end point.
 
         for (Point2D point2D : output) {
             System.out.println(point2D);
@@ -121,17 +131,18 @@ public class RayTracingVisibilityAlgorithm implements VisibilityAlgorithm {
      * It is given the edges do not intersect.
      */
     private int compareEdges(Edge a, Edge b, Point2D light) {
-//        Point2D comparePoint = a.start;
-//        if (Utilities.computeAngleZeroed(a.start, light, b.start) > 0) {
-//            comparePoint = b.start;
-//        }
-//
-//        double angle = Utilities.computeAngleTo(comparePoint, light);
-//
-//        return (a.getPoint(light, angle).distance(light) < b.getPoint(light, angle).distance(light)) ? -1 : 1;
+        Point2D intervalStart = a.start;
+        Point2D intervalEnd = a.end;
+        if (Utilities.computeAngleZeroed(a.start, light, b.start) > 0) {
+            intervalStart = b.start;
+        }
+        if (Utilities.computeAngleZeroed(a.end, light, b.end) <= 0) {
+            intervalEnd = b.end;
+        }
 
-        // TODO: fix in case edges intersect at endpoints
-        return 1;
+        double angle = Utilities.computeAngleTo(intervalStart, light) + Utilities.computeAngleZeroed(intervalStart, light, intervalEnd) / 2;
+
+        return (a.getPoint(light, angle).distance(light) < b.getPoint(light, angle).distance(light)) ? -1 : 1;
     }
 
     private void setup(Point2D light, List<Point2D> polygon) {
