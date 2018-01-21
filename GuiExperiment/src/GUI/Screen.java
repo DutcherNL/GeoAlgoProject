@@ -239,7 +239,7 @@ public class Screen {
 	}
 
     public void removeLights() {
-		lights.setLights(new ArrayList<>());
+		lights.clear();
 		this.drawSpace.repaint();
     }
 }
