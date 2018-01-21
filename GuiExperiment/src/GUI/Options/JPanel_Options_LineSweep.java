@@ -8,7 +8,9 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 
 import Space.Room;
+import Space.RoomFragment;
 import Space.UpdateEvent;
+import Space.Vertex;
 import Space.PhaseControl.PhaseControl_LineSweep;
 
 public class JPanel_Options_LineSweep  extends JPanel_Options{
@@ -53,19 +55,45 @@ public class JPanel_Options_LineSweep  extends JPanel_Options{
 		button_FinalCompute.setEnabled(false);
 		button_FinalCompute.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-					Sweeper.visualizeShape = !Sweeper.visualizeShape;
-					if (Sweeper.Shape == null) {
-						Sweeper.CompleteShape();
-					}
-					Sweeper.onUpdate();
+				button_FinalCompute.setText("Flip visuals");
+			
+				Sweeper.visualizeShape = !Sweeper.visualizeShape;
+				if (Sweeper.Shape == null) {
+					Sweeper.CompleteShape();
+				}
+				Sweeper.onUpdate();
+		    }          
+		});
+		
+		// Print button
+		JButton button_StoreShell= new JButton("Store Shell in room");
+		this.add(button_StoreShell);
+		button_StoreShell.setEnabled(false);
+		button_StoreShell.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+					Sweeper.room.clear();
+					
+					java.util.ArrayList<Vertex> list = new java.util.ArrayList<Vertex>();
+					Vertex root = Sweeper.Shape.get(0).startPoint;
+					Vertex v = root;;
+					do {
+						list.add(v);
+						v = v.getNext();
+					} while (v != root);
+					
+					
+					Sweeper.room.addFragment(new RoomFragment(list));
+					
 			    }          
 		});
+		
 		
 		Sweeper.addListener(new UpdateEvent() {
 			public void onUpdate() {
 				button_FinalCompute.setEnabled(Sweeper.shapeComplete);
 				button_FullSweep.setEnabled(!Sweeper.shapeComplete);
 				button_SingleSweep.setEnabled(!Sweeper.shapeComplete);
+				button_StoreShell.setEnabled(Sweeper.Shape != null);
 			}
 		});
 		

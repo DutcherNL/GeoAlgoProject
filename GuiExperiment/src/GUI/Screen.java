@@ -17,6 +17,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.*;
+import java.util.ArrayList;
 
 
 /**
@@ -40,7 +41,7 @@ public class Screen {
 	private int phase = 0;
 	/**
 	 * Phase 0 = room build
-	 * Phase 1 = Room acceptance (triangulisation)
+	 * Phase 1 = Room acceptance (triangulation)
 	 * Phase 2 = Build Lights
 	 */
 
@@ -230,6 +231,11 @@ public class Screen {
 		lights.setLights(lightsList);
 		room.setVertices((java.util.List<Vertex>) in.readObject());
 		this.drawSpace.repaint();
+		in.close();
 	}
-	
+
+    public void removeLights() {
+		lights.setLights(new ArrayList<>());
+		this.drawSpace.repaint();
+    }
 }

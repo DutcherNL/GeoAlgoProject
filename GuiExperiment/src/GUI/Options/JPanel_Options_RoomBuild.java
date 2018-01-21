@@ -45,6 +45,15 @@ public class JPanel_Options_RoomBuild extends JPanel_Options{
 				Builder.clearVertices();
 	         }          
 		});
+
+		// removeLights button
+		JButton button_RemoveLights = new JButton("Remove lights");
+		this.add(button_RemoveLights);
+		button_RemoveLights.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				screen.removeLights();
+	         }
+	    });
 		
 		// Compute shape button
 		JButton button_Shape = new JButton("Define shape as room");

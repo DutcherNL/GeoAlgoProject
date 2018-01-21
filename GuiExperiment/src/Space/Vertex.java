@@ -1,12 +1,20 @@
 package Space;
 
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;;
 
 public class Vertex extends PointDouble {
     private Vertex previous;
     private Vertex next;
     private boolean start;
+    private boolean intermediate = false;
+
+    public void setIntermediate(boolean intermediate) {
+        this.intermediate = intermediate;
+    }
+
+    public boolean isIntermediate() {
+        return intermediate;
+    }
 
     public Vertex(double x, double y, Vertex previous) {
         super(x, y);
@@ -35,6 +43,9 @@ public class Vertex extends PointDouble {
 
     public void setPrevious(Vertex previous) {
         this.previous = previous;
+        if (previous != null) {
+            previous.setNext(this);
+        }
     }
 
     public Vertex getNext() {

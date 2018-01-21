@@ -7,9 +7,10 @@ import Space.Vertex;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.util.List;
 
-public class JPanel_DrawSpace_Builder extends JPanel_DrawSpace{
+public class JPanel_DrawSpace_Builder extends JPanel_DrawSpace implements MouseMotionListener {
 
 	public final static Color POINT_COLOR = new Color(53, 53, 53);
 	public final static Color EDGE_COLOR = new Color(53, 53, 53);
@@ -26,6 +27,7 @@ public class JPanel_DrawSpace_Builder extends JPanel_DrawSpace{
 
 		//zoomScope();
 		this.addMouseListener(this);
+		this.addMouseMotionListener(this);
 
 		this.roomBuilder.addListener(this::repaint);
 		this.lights.addListener(this::repaint);
@@ -65,16 +67,47 @@ public class JPanel_DrawSpace_Builder extends JPanel_DrawSpace{
 		this.drawPoint(g, this.roomBuilder.Intersection);
 	}
 	
+	private boolean dragging = false;
+
+	private void drag(MouseEvent me) {
+		int x = (int) ((me.getX() - edgeCorrection) / zoomFactor_x + start_x);
+		int y = (int) ((me.getY() - edgeCorrection) / zoomFactor_y + start_y);
+
+		lights.clear();
+		lights.addLight(new Point(x, y));
+		lights.calculateVisibilityRegions();
+	}
 
 	@Override
-	public void mouseClicked(MouseEvent me) {
+	public void mousePressed(MouseEvent me) {
 		int x = (int)((me.getX() - edgeCorrection) / zoomFactor_x + start_x);
 		int y = (int)((me.getY() - edgeCorrection) / zoomFactor_y + start_y);
 
 		if (me.getButton() == MouseEvent.BUTTON1) {
 			this.roomBuilder.addVertex(x, y);
+		} else if (me.getButton() == MouseEvent.BUTTON2) {
+			dragging = true;
+			drag(me);
 		} else if (me.getButton() == MouseEvent.BUTTON3) {
 			lights.addLight(new Point(x, y));
 		}
-}
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent me) {
+		if (me.getButton() == MouseEvent.BUTTON2) {
+			dragging = false;
+			drag(me);
+		}
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent me) {
+		if (dragging) {
+			drag(me);
+		}
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {}
 }
