@@ -87,8 +87,8 @@ public class Vertex extends PointDouble {
      * @return
      */
     public boolean isHeldHere() {
-    	if (this.y - this.next.y < 0.0001) {
-    		if(this.x - this.next.x  < 0.0001) {
+    	if (Math.abs(this.y - this.next.y) < 0.0001) {
+    		if(Math.abs(this.x - this.next.x)  < 0.0001) {
     			return true;
     		}
     	}

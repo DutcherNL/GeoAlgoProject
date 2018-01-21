@@ -63,14 +63,23 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 		this.onUpdate();
 	}
 	
+	/**
+	 * The visibility region can have very close positioned points in consequtive motion messing up the type
+	 * This method corrects for it.
+	 * @param i
+	 * @param isMain
+	 * @return
+	 */
 	private Sweep_Form ReCheckLightVertices(int i, boolean isMain) {
 		// Check for held vertices in the vertices
 		Vertex sourceVertex = this.lights.getVisibilityRegions().get(i).get(0);
 		Vertex currentVertex = sourceVertex;
-		if (sourceVertex == null)
+		if (sourceVertex == null) {
 			return new Sweep_Form(null, isMain);
-		
-		do {
+		}
+		do {			
+			System.out.println(currentVertex);
+			
 			if (currentVertex.isHeldHere()) {
 				// Previous point was at the same position,
 				// Link its neighbours
@@ -81,13 +90,12 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 					sourceVertex = currentVertex;
 					continue;
 				}
-				
 			}
-			System.out.println("d");
 			currentVertex = currentVertex.getNext();
 			
 		} while (currentVertex != sourceVertex);
 		
+		System.out.println("Form cleaned");
 
 		return new Sweep_Form(sourceVertex, isMain);
 	}

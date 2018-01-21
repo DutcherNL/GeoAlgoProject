@@ -40,7 +40,7 @@ public class Sweep_Form {
 				splitNodes.add(currentVertex);
 			}
 			
-			currentVertex = currentVertex.getPrevious();
+			currentVertex = currentVertex.getNext();
 			
 		} while (currentVertex != this.sourceVertex);
 	}

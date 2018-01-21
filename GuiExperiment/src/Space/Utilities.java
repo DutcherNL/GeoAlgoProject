@@ -78,7 +78,7 @@ public class Utilities {
 		if (endPoint == null) return false;
 
 		if (startPoint.getY() < endPoint.getY()) return true;
-		if (startPoint.getY() == endPoint.getY() && startPoint.getX() >= endPoint.getX()) return true;
+		if (startPoint.getY() == endPoint.getY() && startPoint.getX() > endPoint.getX()) return true;
 		return false;
 	}
 
