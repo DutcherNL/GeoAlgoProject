@@ -50,13 +50,25 @@ public class RayTracingVisibilityAlgorithm implements VisibilityAlgorithm {
         }
     }
     private class EdgeStartEvent extends Event {
-        EdgeStartEvent(Edge edge, Point2D start, Point2D light) {
-            super(edge, Utilities.computeAngleTo(start, light), start.distance(light));
+        EdgeStartEvent(Edge edge, Point2D light) {
+            super(
+                    edge,
+                    (edge.start.equals(light)) ?
+                            Utilities.computeAngleTo(edge.end, light) :
+                            Utilities.computeAngleTo(edge.start, light),
+                    edge.start.distance(light)
+            );
         }
     }
     private class EdgeEndEvent extends Event {
-        EdgeEndEvent(Edge edge, Point2D end, Point2D light) {
-            super(edge, Utilities.computeAngleTo(end, light), end.distance(light));
+        EdgeEndEvent(Edge edge, Point2D light) {
+            super(
+                    edge,
+                    (edge.end.equals(light)) ?
+                            Utilities.computeAngleTo(edge.start, light) :
+                            Utilities.computeAngleTo(edge.end, light),
+                    edge.end.distance(light)
+            );
         }
     }
 
@@ -78,7 +90,7 @@ public class RayTracingVisibilityAlgorithm implements VisibilityAlgorithm {
                         if (closestEdge != null && output.size() > 0 && !closestEdge.end.equals(event.edge.start)) {
                             output.add(closestEdge.getPoint(light, event.angle));
                         }
-                        if (pass > 0 && output.get(0).equals(event.edge.start)) {
+                        if (pass > 0 && output.get(0).equals(event.edge.start) && !event.edge.start.equals(light)) {
                             break;
                         }
                         output.add(event.edge.start);
@@ -94,7 +106,7 @@ public class RayTracingVisibilityAlgorithm implements VisibilityAlgorithm {
                     }
 
                     if (event.edge.equals(closestEdge)) {
-                        if (pass > 0 && output.get(0).equals(event.edge.end)) {
+                        if (pass > 0 && output.get(0).equals(event.edge.end) && !event.edge.end.equals(light)) {
                             break;
                         }
                         output.add(event.edge.end);
@@ -163,8 +175,8 @@ public class RayTracingVisibilityAlgorithm implements VisibilityAlgorithm {
                 edge.start = edge.end;
                 edge.end = t;
             }
-            events.add(new EdgeStartEvent(edge, edge.start, light));
-            events.add(new EdgeEndEvent(edge, edge.end, light));
+            events.add(new EdgeStartEvent(edge, light));
+            events.add(new EdgeEndEvent(edge, light));
         }
         events.sort((a, b) -> {
             int compare = (int) Math.signum(a.angle - b.angle);
