@@ -4,12 +4,16 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Stroke;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
 import Space.Lights;
+import Space.PointDouble;
 import Space.RoomFragment;
 import Tree_Sweep.SweepDomain;
 import Space.Vertex;
@@ -29,6 +33,8 @@ public class JPanel_DrawSpace_LineSweep extends JPanel_DrawSpace{
 	public final static Color YLINE_COLOR = new Color(53, 53, 53);
 	public final static Color EDGE_ERROR_COLOR = Color.RED;
 	
+	private Point2D mouseCoordinate;
+	private boolean zoomIn;
 	private PhaseControl_LineSweep roomSweeper;
 	
 	public JPanel_DrawSpace_LineSweep(PhaseControl_LineSweep RoomSweeper) {
@@ -147,4 +153,47 @@ public class JPanel_DrawSpace_LineSweep extends JPanel_DrawSpace{
 			this.drawVertices(g, this.roomSweeper.mainForm.getSplitVertices(), POINT_COLOR_SPLIT);
 		}
 	}
+
+	@Override
+	public void mousePressed(MouseEvent me) {
+		int x = (int)((me.getX() - edgeCorrection) / zoomFactor_x + start_x);
+		int y = (int)((me.getY() - edgeCorrection) / zoomFactor_y + start_y);
+
+		switch(me.getButton()) {
+			case MouseEvent.BUTTON1:
+				
+				this.mouseCoordinate = new PointDouble(x, y);
+				this.zoomIn = true;
+				break;
+			case MouseEvent.BUTTON2:
+				this.resetZoom();
+				break;
+			case MouseEvent.BUTTON3:
+				this.mouseCoordinate = new PointDouble(x, y);
+				this.zoomIn = false;
+				break;
+		}
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent me) {
+		if (this.mouseCoordinate != null) {
+		
+			if (this.zoomIn) {
+				zoomFactor_x = this.zoomFactor_x * 2;
+				zoomFactor_y = this.zoomFactor_y * 2;
+			} else {
+				zoomFactor_x = this.zoomFactor_x / 2;
+				zoomFactor_y = this.zoomFactor_y / 2;
+			}
+			
+			this.start_x = this.mouseCoordinate.getX() - (size.getWidth() - 2 * edgeCorrection) / (2 * this.zoomFactor_x);
+			this.start_y = this.mouseCoordinate.getY() - (size.getHeight() - 2 * edgeCorrection) / (2 * this.zoomFactor_y);
+			
+			this.mouseCoordinate = null;
+			
+			this.repaint();
+		}
+	}
+
 }

@@ -682,9 +682,7 @@ public abstract class TreeNode_Sweep{
  	 * Update this side, i.e. move to the next segment and trigger any even necessary
  	 */
  	protected abstract void update();
- 	
- 	
- 	
+ 	 	
  	
 	protected void changeConflictedState() {
 		this.isConflicted = !this.isConflicted;
@@ -733,9 +731,7 @@ public abstract class TreeNode_Sweep{
 		if (this.parentNode != null)
 			this.parentNode.calcNodeVariables();
 	}
-	
-	
-	
+
 
 	/**
 	 * Recalculates the height of this node, computed top down

@@ -235,6 +235,12 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 	      return size;
 }
 
-	
+	protected void resetZoom() {
+		pointWidth = 10;
+		start_x = 0;
+		start_y = size.height - edgeCorrection;;
+		zoomFactor_x = 1;
+		zoomFactor_y = -1;
+	}
 	
 }

@@ -78,10 +78,9 @@ public class Utilities {
 		if (endPoint == null) return false;
 
 		if (startPoint.getY() < endPoint.getY()) return true;
-		if (startPoint.getY() == endPoint.getY() && startPoint.getX() > endPoint.getX()) return true;
+		if (startPoint.getY() == endPoint.getY() && startPoint.getX() >= endPoint.getX()) return true;
 		return false;
 	}
-
 
 
 	public static PointType computePointType(Vertex Vertex) {
@@ -91,6 +90,9 @@ public class Utilities {
 		double angle =  Utilities.computeInternalAngle(Vertex);
 
 		//System.out.println(Vertex.toString());
+		
+		if (Vertex.isHeldHere())
+			return PointType.REGULARVERTEX;
 
 		if (Utilities.isBelow(Vertex.getPrevious(),Vertex) &&
 			Utilities.isBelow(Vertex.getNext(), Vertex)) {

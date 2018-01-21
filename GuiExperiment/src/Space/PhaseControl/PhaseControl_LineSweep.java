@@ -56,11 +56,40 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 			this.mainForm = new Sweep_Form(this.room.getFragments().get(0).getVertices().get(0), true);
 		} else {
 			// Use the lights
-			this.mainForm = new Sweep_Form(this.lights.getVisibilityRegions().get(0).get(0), true);
+			this.mainForm = ReCheckLightVertices(0, true);
 		}
 		
 		this.setUpNextSweep();
 		this.onUpdate();
+	}
+	
+	private Sweep_Form ReCheckLightVertices(int i, boolean isMain) {
+		// Check for held vertices in the vertices
+		Vertex sourceVertex = this.lights.getVisibilityRegions().get(i).get(0);
+		Vertex currentVertex = sourceVertex;
+		if (sourceVertex == null)
+			return new Sweep_Form(null, isMain);
+		
+		do {
+			if (currentVertex.isHeldHere()) {
+				// Previous point was at the same position,
+				// Link its neighbours
+				currentVertex.getPrevious().setNext(currentVertex.getNext());
+				System.out.println("Found a held vertex");
+				if (currentVertex == sourceVertex) {
+					currentVertex = currentVertex.getNext();
+					sourceVertex = currentVertex;
+					continue;
+				}
+				
+			}
+			System.out.println("d");
+			currentVertex = currentVertex.getNext();
+			
+		} while (currentVertex != sourceVertex);
+		
+
+		return new Sweep_Form(sourceVertex, isMain);
 	}
 	
 	@Override
@@ -73,7 +102,7 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 		if (this.useRoomFragments) {
 			// Use the room fragments as deliminator
 			if (this.room.getFragments().size() > this.shapeCounter) {
-				this.sideForm = new Sweep_Form(this.room.getFragments().get(this.shapeCounter).getVertices().get(0), true);
+				this.sideForm = new Sweep_Form(this.room.getFragments().get(this.shapeCounter).getVertices().get(0), false);
 				this.shapeCounter++;
 			} else {
 				this.sideForm = new Sweep_Form(null, true);
@@ -81,9 +110,9 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 				return;
 			}
 		} else {
-			// Use the room fragments as deliminator
+			// Use the light regions as deliminator
 			if (this.lights.getVisibilityRegions().size() > this.shapeCounter) {
-				this.sideForm = new Sweep_Form(this.lights.getVisibilityRegions().get(this.shapeCounter).get(0), true);
+				this.sideForm = ReCheckLightVertices(this.shapeCounter, false);
 				this.shapeCounter++;
 			} else {
 				this.sideForm = new Sweep_Form(null, true);

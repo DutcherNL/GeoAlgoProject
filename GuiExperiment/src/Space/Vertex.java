@@ -81,4 +81,17 @@ public class Vertex extends PointDouble {
     public String printCoordinates() {
     	return "x: "+x + " y: "+y;
     }
+    
+    /**
+     * Returns whether the next coordinate is at the same position
+     * @return
+     */
+    public boolean isHeldHere() {
+    	if (this.y - this.next.y < 0.0001) {
+    		if(this.x - this.next.x  < 0.0001) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
 }
