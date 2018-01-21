@@ -170,27 +170,31 @@ public class TreeNode_Vertex {
 			}
 		}
 		
+		encapsuledNodes++;
+		
 	}
 
 
 	public Vertex get(int i) {
+		System.out.println("GET: "+i + " "+this.encapsuledNodes);
 		if (leftNode != null) {
-			if (leftNode.encapsuledNodes < i) {
+			if (i <= leftNode.encapsuledNodes) {
 				return leftNode.get(i);
 			} else {
-				i -= leftNode.encapsuledNodes;
+				i -= leftNode.encapsuledNodes + 1;
 			}
 		}
 		if (i == 0) {
+			System.out.println("Return");
 			return this.ownContent;
 		} else {
-			i -= 1;
+			i--;
 		}
 		if (rightNode != null) {
 			return rightNode.get(i);
 		}
 		
-		System.out.println("You should not have reached here");
+		System.out.println("You reached the end of the line buddy, nothing for you here");
 		return null;
 	}
 

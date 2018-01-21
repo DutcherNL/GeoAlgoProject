@@ -10,8 +10,10 @@ public class Vertex extends PointDouble {
 
     public Vertex(double x, double y, Vertex previous) {
         super(x, y);
-        this.previous = previous;
-        previous.setNext(this);
+        if (previous != null) {
+        	this.previous = previous;
+        	previous.setNext(this);
+        }
     }
 
     public Vertex(double x, double y, boolean start) {

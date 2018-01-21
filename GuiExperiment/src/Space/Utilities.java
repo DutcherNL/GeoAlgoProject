@@ -18,7 +18,7 @@ public class Utilities {
     public static double computeInternalAngle(Vertex Source) {
     	double result = computeAngle(Source.getPrevious(), Source, Source.getNext());
     	
-    	System.out.println((result / (2*Math.PI) * 360) + " rad");
+    	//System.out.println((result / (2*Math.PI) * 360) + " rad");
     	return result;
     }
     
@@ -45,7 +45,7 @@ public class Utilities {
 		
 		double angle =  Utilities.computeInternalAngle(Vertex);
 		
-		System.out.println(Vertex.toString());
+		//System.out.println(Vertex.toString());
 		
 		if (Utilities.isBelow(Vertex.getPrevious(),Vertex) &&
 			Utilities.isBelow(Vertex.getNext(), Vertex)) {
