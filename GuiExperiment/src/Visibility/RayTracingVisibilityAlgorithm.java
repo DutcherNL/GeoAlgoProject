@@ -28,7 +28,7 @@ public class RayTracingVisibilityAlgorithm implements VisibilityAlgorithm {
             double beta = Utilities.computeAngle(end, start, light);
             double alpha = Math.PI - beta - angle;
             double ap = (light.distance(start) / Math.sin(alpha)) * Math.sin(angle);
-            double t = ap / start.distance(end);
+            double t = Math.min(1, Math.max(0, ap / start.distance(end)));
             return new Point2D.Double(
                     start.getX() * (1 - t) + end.getX() * t,
                     start.getY() * (1 - t) + end.getY() * t
@@ -81,7 +81,7 @@ public class RayTracingVisibilityAlgorithm implements VisibilityAlgorithm {
                     if (event.edge.equals(edgeHeap.peek())) {
                         System.out.println("Start of new visible edge");
                         // new edge is closest
-                        if (closestEdge != null && !closestEdge.end.equals(event.edge.start)) {
+                        if (closestEdge != null && output.size() > 0 && !closestEdge.end.equals(event.edge.start)) {
                             output.add(closestEdge.getPoint(light, event.angle));
                         }
 
@@ -142,7 +142,12 @@ public class RayTracingVisibilityAlgorithm implements VisibilityAlgorithm {
 
         double angle = Utilities.computeAngleTo(intervalStart, light) + Utilities.computeAngleZeroed(intervalStart, light, intervalEnd) / 2;
 
-        return (a.getPoint(light, angle).distance(light) < b.getPoint(light, angle).distance(light)) ? -1 : 1;
+        double aDist = a.getPoint(light, angle).distance(light);
+        double bDist = b.getPoint(light, angle).distance(light);
+
+        System.out.println("Compare " + a + ", " + b + " -- " + aDist + "|" + bDist);
+
+        return (int) Math.signum(aDist - bDist);
     }
 
     private void setup(Point2D light, List<Point2D> polygon) {
