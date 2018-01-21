@@ -72,25 +72,19 @@ public class RayTracingVisibilityAlgorithm implements VisibilityAlgorithm {
         for (int pass = 0; pass < 2; pass++) {
             for (Event event : events) {
                 if (event instanceof EdgeStartEvent) {
-                    System.out.println("Start of " + event.edge);
                     edgeHeap.add(event.edge);
                     if (event.edge.equals(edgeHeap.peek())) {
-                        System.out.println("Start of new visible edge");
                         // new edge is closest
                         if (closestEdge != null && output.size() > 0 && !closestEdge.end.equals(event.edge.start)) {
                             output.add(closestEdge.getPoint(light, event.angle));
                         }
-
                         if (pass > 0 && output.get(0).equals(event.edge.start)) {
                             break;
                         }
-
                         output.add(event.edge.start);
                     }
-
                     closestEdge = edgeHeap.peek();
                 }
-
                 if (event instanceof EdgeEndEvent) {
                     if (!edgeHeap.remove(event.edge)) {
                         // remove nonexistent edge? => we'll use it next pass.
@@ -99,14 +93,10 @@ public class RayTracingVisibilityAlgorithm implements VisibilityAlgorithm {
                         continue;
                     }
 
-                    System.out.println("End of " + event.edge);
                     if (event.edge.equals(closestEdge)) {
-                        System.out.println("End of visible edge");
-
                         if (pass > 0 && output.get(0).equals(event.edge.end)) {
                             break;
                         }
-
                         output.add(event.edge.end);
                         closestEdge = edgeHeap.peek();
                         if (closestEdge != null && !closestEdge.start.equals(event.edge.end)) {
@@ -117,8 +107,12 @@ public class RayTracingVisibilityAlgorithm implements VisibilityAlgorithm {
             }
         }
 
-        for (Point2D point2D : output) {
-            System.out.println(point2D);
+        // improve robustness by removing consecutive points which are very close to each other
+        for (int i = 1; i < output.size(); i++) {
+            if (output.get(i).distance(output.get(i-1)) < 1e-9) {
+                output.remove(i);
+                i -= 1;
+            }
         }
 
         return output;
@@ -138,12 +132,10 @@ public class RayTracingVisibilityAlgorithm implements VisibilityAlgorithm {
             intervalEnd = b.end;
         }
 
-        double angle = Utilities.computeAngleTo(intervalStart, light) + Utilities.computeAngleZeroed(intervalStart, light, intervalEnd) / 2;
-
+        double angle = Utilities.computeAngleTo(intervalStart, light) +
+                Utilities.computeAngleZeroed(intervalStart, light, intervalEnd) / 2;
         double aDist = a.getPoint(light, angle).distance(light);
         double bDist = b.getPoint(light, angle).distance(light);
-
-        System.out.println("Compare " + a + ", " + b + " -- " + aDist + "|" + bDist);
 
         if (Math.abs(aDist - bDist) < 1e-9) {
             return 0;
