@@ -15,6 +15,7 @@ public class TreeNode_SweepRight extends TreeNode_Sweep{
 	@Override
 	protected void update() {
 		TreeNode_Sweep mergeNode = this.getNextNode(this.type);
+			// TODO: This can also be done by checking whether this startpoint.getprevious has a higher y-coordinate. 
 		if (mergeNode != null && mergeNode.segment.getLowestValue() == this.segment.getLowestValue()) {
 			// A merge occurs
 			this.checkIntersectLeft(this.segment.startPoint.y);

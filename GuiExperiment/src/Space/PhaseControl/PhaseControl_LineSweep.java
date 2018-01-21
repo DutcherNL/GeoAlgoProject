@@ -217,7 +217,6 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 	 */
 	private void sweepProcessDomain(Vertex topDomainVertex) {
 		this.yLine = topDomainVertex.getY();
-		System.out.println("YLine:"+this.yLine);
 		// Domain has a higher point
 		this.status.update();
 
@@ -289,43 +288,42 @@ public class PhaseControl_LineSweep  extends PhaseControl{
 	}
 	
 	public void CompleteShape() {
-		// This is pure for visualisation and is not optimised yet
-		// Current duration O(kn^2) with k= the number of unique outlines
 		this.Shape = new ArrayList<VertexSegment>();
 		
-		this.addMAIN = this.mainForm.getStartVertices();
-		this.splitMAIN = this.mainForm.getSplitVertices();
 		Vertex currVertex = null;
+		Vertex rootVertex;
 		
 		// Loop over all known start vertices
-		for (Vertex vertex : this.addMAIN) {
-			currVertex = vertex;
+		for (int i=0; (rootVertex = this.mainForm.getStartVertex(i)) != null; i++) {
+			currVertex = rootVertex;
 			// Loop over the entire figure, make all segments, remove any vertices from the lists encountered
 			do {
 				this.Shape.add(new VertexSegment(currVertex, currVertex.getNext()));
-				currVertex = currVertex.getNext();
-				this.splitMAIN.remove(currVertex);
-				if (currVertex != vertex) {
-					this.addMAIN.remove(currVertex);
+				if (currVertex != rootVertex) {
+					this.mainForm.removeVertex(currVertex);
 				}
+				currVertex = currVertex.getNext();
 				
-			} while (currVertex != vertex);
+			} while (currVertex != rootVertex);
 		}
 		
 		// Loop over all split vertices
-		for (Vertex vertex : this.splitMAIN) {
-			currVertex = vertex;
+		for (int i=0; (rootVertex = this.mainForm.getSplitVertex(i)) != null; i++) {
+			currVertex = rootVertex;
 			// Loop over the entire figure, make all segments, remove any vertices from the lists encountered
 			do {
 				this.Shape.add(new VertexSegment(currVertex, currVertex.getNext()));
-				currVertex = currVertex.getNext();
-				this.addMAIN.remove(currVertex);
-				if (currVertex != vertex) {
-					this.splitMAIN.remove(currVertex);
-				}
 				
-			} while (currVertex != vertex);
+				if (currVertex != rootVertex) {
+					this.mainForm.removeVertex(currVertex);
+				}
+				currVertex = currVertex.getNext();
+				
+			} while (currVertex != rootVertex);
 		}
+		
+		System.out.println("Done");
+		System.out.println(this.Shape.size());
 		
 	}
 }

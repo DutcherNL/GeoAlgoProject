@@ -60,11 +60,29 @@ public class Sweep_Form {
 		System.out.println("Remove Split ordered");
 		this.splitNodes.remove(v);
 	}
+	
+	public void removeVertex(Vertex v) {
+		PointType pointType = Utilities.computePointType(v);
+		if (pointType == PointType.STARTVERTEX) {
+			System.out.println("Remove start vertex");
+			this.startNodes.remove(v);
+		} else if (pointType == PointType.SPLITVERTEX) {
+			System.out.println("Remove split vertex");
+			this.splitNodes.remove(v);
+		}
+	}
 
 	public List<Vertex> getStartVertices(){
 		return startNodes.getVertices();
 	}
 	public List<Vertex> getSplitVertices(){
 		return splitNodes.getVertices();
+	}
+	
+	public Vertex getStartVertex(int i) {
+		return startNodes.get(i);
+	}
+	public Vertex getSplitVertex(int i) {
+		return splitNodes.get(i);
 	}
 }

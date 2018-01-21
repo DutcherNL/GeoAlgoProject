@@ -4,9 +4,7 @@ import Visibility.NullVisiblityAlgorithm;
 import Visibility.RayTracingVisibilityAlgorithm;
 import Visibility.StackVisibilityAlgorithm;
 import Visibility.VisibilityAlgorithm;
-import javafx.util.Pair;
 
-import javax.rmi.CORBA.Util;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.*;

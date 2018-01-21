@@ -1,5 +1,6 @@
 package GUI.DrawSpace;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -25,7 +26,6 @@ public class JPanel_DrawSpace_LineSweep extends JPanel_DrawSpace{
 	public final static Color COLOR_RESULT = new Color(0, 200, 200);
 	public final static Color EDGE_COLOR = new Color(53, 53, 53);
 	public final static Color YLINE_COLOR = new Color(53, 53, 53);
-	public final static Color BACKGROUND_COLOR = new Color(151, 151, 151);
 	public final static Color EDGE_ERROR_COLOR = Color.RED;
 	
 	private PhaseControl_LineSweep roomSweeper;
@@ -52,6 +52,9 @@ public class JPanel_DrawSpace_LineSweep extends JPanel_DrawSpace{
 	}
 	
 	private void displayResult(Graphics g) {
+		
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setStroke(new BasicStroke(8));
 		this.drawLines(g, COLOR_RESULT, this.roomSweeper.Shape);
 	}
 
