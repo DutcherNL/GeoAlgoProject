@@ -2,15 +2,11 @@ package Visibility;
 
 import Space.Utilities;
 
-import javax.rmi.CORBA.Util;
-import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
-
-import static Space.Utilities.computeAngle;
 
 public class RayTracingVisibilityAlgorithm implements VisibilityAlgorithm {
 
@@ -91,13 +87,15 @@ public class RayTracingVisibilityAlgorithm implements VisibilityAlgorithm {
 
                         output.add(event.edge.start);
                     }
+
                     closestEdge = edgeHeap.peek();
                 }
 
                 if (event instanceof EdgeEndEvent) {
                     if (!edgeHeap.remove(event.edge)) {
+                        // remove nonexistent edge? => we'll use it next pass.
+                        // for now, remove all visible points, we'll add those next pass as well
                         output.clear();
-                        // remove nonexistent edge? => we'll use it next pass
                         continue;
                     }
 
@@ -147,11 +145,14 @@ public class RayTracingVisibilityAlgorithm implements VisibilityAlgorithm {
 
         System.out.println("Compare " + a + ", " + b + " -- " + aDist + "|" + bDist);
 
+        if (Math.abs(aDist - bDist) < 1e-9) {
+            return 0;
+        }
         return (int) Math.signum(aDist - bDist);
     }
 
     private void setup(Point2D light, List<Point2D> polygon) {
-        // list of edges, to be sorted by starting angle and distance.
+        // list of edges
         List<Edge> edges = new ArrayList<>(polygon.size());
         Point2D prev = null;
         for (Point2D vertex : polygon) {
@@ -161,7 +162,6 @@ public class RayTracingVisibilityAlgorithm implements VisibilityAlgorithm {
             prev = vertex;
         }
         edges.add(new Edge(prev, polygon.get(0)));
-        edges.sort((a, b) -> (int) Math.signum(Utilities.computeAngleZeroed(b.start, light, a.start)));
 
         // list of radial sweep events sorted by occurrence angle.
         events = new ArrayList<>();
