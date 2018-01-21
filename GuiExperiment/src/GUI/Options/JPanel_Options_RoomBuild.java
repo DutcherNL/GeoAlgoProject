@@ -46,15 +46,7 @@ public class JPanel_Options_RoomBuild extends JPanel_Options{
 	         }          
 		});
 
-		// removeLights button
-		JButton button_RemoveLights = new JButton("Remove lights");
-		this.add(button_RemoveLights);
-		button_RemoveLights.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				screen.removeLights();
-	         }
-	    });
-		
+
 		// Compute shape button
 		JButton button_Shape = new JButton("Define shape as room");
 		this.add(button_Shape);
@@ -76,6 +68,15 @@ public class JPanel_Options_RoomBuild extends JPanel_Options{
 				Builder.clearFragments();
 	         }          
 		});
+		
+		// removeLights button
+		JButton button_RemoveLights = new JButton("Remove lights");
+		this.add(button_RemoveLights);
+		button_RemoveLights.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				screen.removeLights();
+	         }
+	    });
 		
 		// Compute visibility regions button
 		JButton button_Save = new JButton("S4V3");
