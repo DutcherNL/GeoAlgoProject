@@ -54,8 +54,6 @@ public class JPanel_DrawSpace_Builder extends JPanel_DrawSpace implements MouseM
 		// Draw all points of the current figure
 		this.drawVertices(g, roomPoints, POINT_COLOR);
 
-		this.drawPoints(g, lights.getTemp(), Color.MAGENTA);
-
 		// Draw all other fragment areas
 		for(RoomFragment fragment : roomBuilder.room.getFragments()) {
 			this.drawLines(g, fragment.getVertices(), EDGE_COLOR);

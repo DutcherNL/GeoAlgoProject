@@ -1,21 +1,19 @@
 package GUI.Options;
 
-import java.awt.GridLayout;
-import java.awt.LayoutManager;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-
-import Space.Room;
+import GUI.SVG;
+import Space.PhaseControl.PhaseControl_LineSweep;
 import Space.RoomFragment;
 import Space.UpdateEvent;
 import Space.Vertex;
-import Space.PhaseControl.PhaseControl_LineSweep;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class JPanel_Options_LineSweep  extends JPanel_Options{
 
-	public JPanel_Options_LineSweep(PhaseControl_LineSweep Sweeper) {
+	public JPanel_Options_LineSweep(PhaseControl_LineSweep Sweeper, SVG svg) {
 		super(Sweeper.room);
 
 		LayoutManager experimentLayout = new GridLayout(6,1);
@@ -85,6 +83,15 @@ public class JPanel_Options_LineSweep  extends JPanel_Options{
 					Sweeper.room.addFragment(new RoomFragment(list));
 					
 			    }          
+		});
+
+		// Compute visibility regions button
+		JButton button_Export = new JButton("Export");
+		this.add(button_Export);
+		button_Export.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				svg.export();
+			}
 		});
 		
 		

@@ -1,5 +1,6 @@
 package GUI.Options;
 
+import GUI.SVG;
 import GUI.Screen;
 import Space.Lights;
 import Space.PhaseControl.PhaseControl_Builder;
@@ -9,7 +10,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 
 /**
  * Contains the option buttons for the program
@@ -17,9 +17,9 @@ import java.io.IOException;
  *
  */
 public class JPanel_Options_RoomBuild extends JPanel_Options{
+
 	
-	
-	public JPanel_Options_RoomBuild(Screen screen, PhaseControl_Builder Builder, Lights lights) {
+	public JPanel_Options_RoomBuild(Screen screen, PhaseControl_Builder Builder, Lights lights, SVG svg) {
 		super(Builder.room);
 
 		LayoutManager experimentLayout = new GridLayout(15,1);
@@ -115,6 +115,17 @@ public class JPanel_Options_RoomBuild extends JPanel_Options{
 				lights.calculateVisibilityRegions();
 			}
 	    });
+
+		// Compute visibility regions button
+		JButton button_Export = new JButton("Export");
+		this.add(button_Export);
+		button_Export.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				svg.export();
+			}
+	    });
+
+
 
 
 		

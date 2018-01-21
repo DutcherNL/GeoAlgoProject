@@ -194,12 +194,14 @@ public class Screen {
 	 */
 	private void BuildPhase0() {
 		RemoveGeneral();
-		
+
+
 		phaseController = new PhaseControl_Builder(room);
 		this.phaseName.setText("Draw Room");
-		this.options = new JPanel_Options_RoomBuild(this, (PhaseControl_Builder)this.phaseController, lights);
 		drawSpace = new JPanel_DrawSpace_Builder((PhaseControl_Builder)this.phaseController, lights);
-		
+		SVG svg = new SVG(drawSpace);
+		this.options = new JPanel_Options_RoomBuild(this, (PhaseControl_Builder)this.phaseController, lights, svg);
+
 		BuildGeneral();
 	}
 	
@@ -208,12 +210,14 @@ public class Screen {
 	 */
 	private void BuildPhase1() {
 		RemoveGeneral();
-		
+
+
 		phaseController = new PhaseControl_LineSweep(room);
 		this.phaseName.setText("Prepare Room");
-		this.options = new JPanel_Options_LineSweep((PhaseControl_LineSweep)phaseController);
 		this.drawSpace = new JPanel_DrawSpace_LineSweep((PhaseControl_LineSweep)phaseController);
-		
+		SVG svg = new SVG(drawSpace);
+		this.options = new JPanel_Options_LineSweep((PhaseControl_LineSweep)phaseController, svg);
+
 		BuildGeneral();
 		
 	}

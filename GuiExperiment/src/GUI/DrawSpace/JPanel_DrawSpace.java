@@ -13,7 +13,8 @@ import java.util.List;
 
 public class JPanel_DrawSpace extends JPanel implements MouseListener{
 
-	protected final static Color BACKGROUND_COLOR = new Color(151, 151, 151);
+	public static boolean DEBUG = true;
+	protected final static Color BACKGROUND_COLOR = new Color(255, 255, 255);
 	protected Dimension size = new Dimension(800,800);
 	protected double edgeCorrection = 20;
 	protected int pointWidth = 10;
@@ -100,11 +101,13 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 	protected void drawLines(Graphics g, List<Vertex> points, Color color, Color connectColor) {
 		g.setColor(color);
 
-		if (points.size() > 0) {
-			g.drawString(0 + "(" + ((int) points.get(0).x) + "," + ((int) points.get(0).y) + ")",
-					(int)((points.get(0).x - start_x) * zoomFactor_x + edgeCorrection),
-					(int)((points.get(0).y - start_y) * zoomFactor_y + edgeCorrection) - 5
-			);
+		if (DEBUG) {
+			if (points.size() > 0) {
+				g.drawString(0 + "(" + ((int) points.get(0).x) + "," + ((int) points.get(0).y) + ")",
+						(int)((points.get(0).x - start_x) * zoomFactor_x + edgeCorrection),
+						(int)((points.get(0).y - start_y) * zoomFactor_y + edgeCorrection) - 5
+				);
+			}
 		}
 
 		for(int i=0; i + 1 < points.size();i++) {
@@ -115,10 +118,12 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 					(int)((points.get(i+1).y - start_y) * zoomFactor_y + edgeCorrection)
 					);
 
-			g.drawString(i+1 + "(" + ((int) points.get(i+1).x) + "," + ((int) points.get(i+1).y) + ")",
-					(int)((points.get(i+1).x - start_x) * zoomFactor_x + edgeCorrection),
-					(int)((points.get(i+1).y - start_y) * zoomFactor_y + edgeCorrection) - 5
-			);
+			if (DEBUG) {
+				g.drawString(i+1 + "(" + ((int) points.get(i+1).x) + "," + ((int) points.get(i+1).y) + ")",
+						(int)((points.get(i+1).x - start_x) * zoomFactor_x + edgeCorrection),
+						(int)((points.get(i+1).y - start_y) * zoomFactor_y + edgeCorrection) - 5
+				);
+			}
 		}
 		g.setColor(connectColor);
 		
@@ -152,20 +157,22 @@ public class JPanel_DrawSpace extends JPanel implements MouseListener{
 		g.fillRect(0, 0, size.width, size.height);
 
 
-		g.setColor(Color.LIGHT_GRAY);
-		for (int i = 0; i < size.width; i += 10) {
-			g.drawLine(i, 0, i, size.height);
+		if (DEBUG) {
+			g.setColor(Color.LIGHT_GRAY);
+			for (int i = 0; i < size.width; i += 10) {
+				g.drawLine(i, 0, i, size.height);
 
-			if (i % 50 == 0) {
-				g.drawLine(i + 1, 0, i + 1, size.height);
+				if (i % 50 == 0) {
+					g.drawLine(i + 1, 0, i + 1, size.height);
+				}
 			}
-		}
 
-		for (int i = 0; i < size.height; i += 10) {
-			g.drawLine(0,  i, size.width, i);
+			for (int i = 0; i < size.height; i += 10) {
+				g.drawLine(0,  i, size.width, i);
 
-			if (i % 50 == 0) {
-				g.drawLine(0, i + 1, size.width, i + 1);
+				if (i % 50 == 0) {
+					g.drawLine(0, i + 1, size.width, i + 1);
+				}
 			}
 		}
 	}
